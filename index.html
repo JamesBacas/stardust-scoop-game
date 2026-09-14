@@ -10,114 +10,107 @@
     <link rel="stylesheet" href="game.css">
 </head>
 <body>
-    <!-- Pixel Art Ambient Background Layer -->
-    <div id="pixelBgLayer" class="pixel-bg-layer"></div>
+    <!-- Dynamic Theme Background Layer -->
+    <div id="themeBgLayer" class="theme-bg-layer theme-emerald"></div>
     <div id="starfield"></div>
 
     <div class="game-wrapper">
-        <!-- Modern Cyber Header -->
+        <!-- Streamlined Single-Row Control Bar -->
         <header class="game-header">
             <div class="header-left">
-                <div class="skill-badge">
-                    <span class="pulse-dot"></span>
-                    <span>AI SKILL POWERED</span>
-                </div>
-                <!-- Theme Switcher Selector -->
-                <div class="theme-selector-wrap">
-                    <label for="themeSelect">THEME:</label>
-                    <select id="themeSelect" class="theme-select">
-                        <option value="emerald">🏰 Emerald Kingdom (Pixel Art)</option>
-                        <option value="space">🚀 Stardust Scoop (Space)</option>
-                        <option value="candy">🍬 Candy Collector (Sweets)</option>
-                        <option value="ocean">🌊 Ocean Diver (Deep Sea)</option>
-                    </select>
-                </div>
+                <select id="themeSelect" class="theme-select">
+                    <option value="emerald">🏰 Emerald Kingdom (Pixel)</option>
+                    <option value="candy">🍬 Candy Crush (Sweets)</option>
+                    <option value="space">🚀 Stardust Scoop (Space)</option>
+                    <option value="ocean">🌊 Ocean Diver (Sea)</option>
+                </select>
             </div>
 
             <h1 class="game-title" id="gameTitleDisplay">🏰 EMERALD KINGDOM</h1>
 
             <div class="header-right">
+                <button class="info-btn" id="infoBtn" title="View Objective & Rules">ℹ️ Objective</button>
                 <div class="sound-toggle" id="soundToggle" title="Toggle Audio (SFX & Music)">
                     <span id="soundIcon">🔊</span>
                 </div>
             </div>
         </header>
 
-        <!-- Objective & Skill Banner -->
-        <div class="objective-bar" id="objectiveBar">
-            <span>🎯 <strong>Objective:</strong> Reach <span class="highlight" id="targetScoreDisplay">50</span> points before 60s expires! Dodge hazardous debris.</span>
-        </div>
-
-        <!-- Dynamic HUD Dashboard -->
-        <div class="hud-container">
-            <div class="hud-box">
-                <span class="hud-label">SCORE</span>
-                <span class="hud-value glow-teal" id="scoreValue">0</span>
-            </div>
-            <div class="hud-box">
-                <span class="hud-label">TARGET</span>
-                <span class="hud-value" id="targetValue">50</span>
-            </div>
-            <div class="hud-box">
-                <span class="hud-label">TIME LEFT</span>
-                <span class="hud-value timer-pulse" id="timerValue">60s</span>
-            </div>
-            <div class="hud-box">
-                <span class="hud-label">LIVES</span>
-                <span class="hud-value lives-display" id="livesValue">❤️❤️❤️</span>
-            </div>
-        </div>
-
-        <!-- Power-Up, Combo & Fever Mode Bar -->
-        <div class="active-status-bar">
-            <div class="left-status-group">
-                <div class="combo-badge" id="comboBadge">
-                    <span class="combo-fire">🔥</span>
-                    <span id="comboText">COMBO x1</span>
-                </div>
-                <div class="fever-badge hidden" id="feverBadge">
-                    <span>⚡ FEVER TIME (2x POINTS!)</span>
-                </div>
+        <!-- Compact Integrated Game HUD Bar -->
+        <div class="compact-hud">
+            <div class="hud-item score-item">
+                <span class="hud-lbl">SCORE</span>
+                <span class="hud-val" id="scoreValue">0</span>
+                <span class="hud-target">/ <span id="targetValue">50</span></span>
             </div>
 
-            <div class="powerup-indicators" id="powerupIndicators">
-                <span class="powerup-tag hidden" id="magnetTag">🧲 MAGNET ACTIVE</span>
-                <span class="powerup-tag hidden" id="chronoTag">⏳ CHRONO WARP</span>
-                <span class="powerup-tag hidden" id="shieldTag">🛡️ SHIELD ACTIVE</span>
+            <!-- Arcade Progress Bar -->
+            <div class="progress-bar-wrap" title="Score Progress">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="hud-item time-item">
+                <span class="hud-lbl">TIME</span>
+                <span class="hud-val timer-pulse" id="timerValue">60s</span>
+            </div>
+
+            <div class="hud-item lives-item">
+                <span class="hud-val lives-display" id="livesValue">❤️❤️❤️</span>
+            </div>
+
+            <!-- Compact Combo & Active Powerup Badges -->
+            <div class="status-tags-group">
+                <span class="mini-tag combo-tag" id="comboBadge">🔥 x1</span>
+                <span class="mini-tag fever-tag hidden" id="feverBadge">⚡ FEVER</span>
+                <span class="mini-tag pu-tag hidden" id="magnetTag">🧲</span>
+                <span class="mini-tag pu-tag hidden" id="chronoTag">⏳</span>
+                <span class="mini-tag pu-tag hidden" id="shieldTag">🛡️</span>
             </div>
         </div>
 
         <!-- Main Canvas Area -->
         <div class="canvas-container" id="canvasContainer">
-            <!-- Danger Hazard Column Warning Overlay -->
+            <!-- Hazard Drop Warning Overlay -->
             <div class="hazard-warning hidden" id="hazardWarning">
                 <span class="warning-icon">⚠️</span> DANGER DROP
             </div>
 
-            <canvas id="gameCanvas" width="800" height="550"></canvas>
+            <canvas id="gameCanvas" width="800" height="520"></canvas>
 
             <!-- Start Screen Overlay -->
             <div class="overlay-screen" id="startOverlay">
                 <div class="overlay-card">
                     <div class="badge">AGENT SKILL POWERED</div>
                     <h2 id="startTitle">EMERALD KINGDOM</h2>
-                    <p class="overlay-subtitle" id="startSubtitle">Steer your vessel, scoop relics, trigger Fever Time & Powerups!</p>
+                    <p class="overlay-subtitle" id="startSubtitle">Catch items, trigger Fever Time & Powerups!</p>
                     
                     <div class="legend-grid" id="legendGrid">
-                        <!-- Populated dynamically based on theme selection -->
+                        <!-- Populated dynamically -->
                     </div>
 
                     <div class="powerup-legend">
-                        <div class="p-item">🧲 <strong>Magnet:</strong> Attracts items</div>
-                        <div class="p-item">⏳ <strong>Chrono:</strong> Slows speed</div>
-                        <div class="p-item">🛡️ <strong>Shield:</strong> Absorbs hit</div>
+                        <div class="p-item">🧲 <strong>Magnet</strong></div>
+                        <div class="p-item">⏳ <strong>Chrono</strong></div>
+                        <div class="p-item">🛡️ <strong>Shield</strong></div>
                     </div>
 
                     <button class="btn btn-start" id="startBtn">🚀 Start Game</button>
                 </div>
             </div>
 
-            <!-- Game Over / Victory Screen Overlay Modal -->
+            <!-- Objective Info Overlay Modal -->
+            <div class="overlay-screen hidden" id="infoOverlay">
+                <div class="overlay-card">
+                    <div class="badge">GAME OBJECTIVE</div>
+                    <h3 style="color: var(--accent-gold); font-size: 1.2rem;">🎯 Objective & Rules</h3>
+                    <p class="overlay-subtitle" id="infoObjectiveText" style="text-align: left; margin: 8px 0;">
+                        Reach <strong>50 points</strong> within <strong>60 seconds</strong>. Avoid bad items or hazards that deduct score/lives. Catch 5 in a row for FEVER TIME!
+                    </p>
+                    <button class="btn btn-restart" id="closeInfoBtn">Got it!</button>
+                </div>
+            </div>
+
+            <!-- Game Over / Victory Overlay Modal -->
             <div class="overlay-screen hidden" id="endOverlay">
                 <div class="overlay-card">
                     <div class="result-badge" id="resultBadge">MISSION ACCOMPLISHED</div>
@@ -139,15 +132,15 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-restart" id="restartBtn">🔄 Launch Again</button>
+                    <button class="btn btn-restart" id="restartBtn">🔄 Play Again</button>
                 </div>
             </div>
         </div>
 
         <!-- Controls Banner -->
         <div class="controls-hint">
-            <span>💻 <strong>Controls:</strong> Mouse hover or <code>← / A</code> & <code>→ / D</code> keys</span>
-            <span>📱 <strong>Mobile:</strong> Touch & drag across screen to steer</span>
+            <span>💻 <strong>Controls:</strong> Mouse move or <code>← / A</code> & <code>→ / D</code> keys</span>
+            <span>📱 <strong>Mobile:</strong> Touch & drag across screen</span>
         </div>
     </div>
 
