@@ -1,0 +1,33 @@
+{
+  "title": "Stardust Scoop",
+  "objective": "Steer your ship to catch stardust and comets while dodging asteroids — reach 50 points before time runs out!",
+  "target_score": 50,
+  "session_seconds": 60,
+  "starting_lives": 3,
+  "items": {
+    "good": [
+      { "id": "stardust", "name": "Stardust", "points": 1, "emoji": "✨", "rarity": "common", "color": "#64ffda" },
+      { "id": "comet", "name": "Comet Fragment", "points": 3, "emoji": "☄️", "rarity": "common", "color": "#00b4d8" },
+      { "id": "crystal", "name": "Power Crystal", "points": 5, "emoji": "💎", "rarity": "uncommon", "color": "#bd5fff" },
+      { "id": "satellite", "name": "Satellite Part", "points": 5, "emoji": "🛰️", "rarity": "uncommon", "color": "#48cae4" },
+      { "id": "nova", "name": "Golden Nova", "points": 15, "emoji": "🌟", "rarity": "rare", "color": "#ffd166" }
+    ],
+    "bad": [
+      { "id": "junk", "name": "Space Junk", "points": -1, "emoji": "🗑️", "rarity": "common", "color": "#8d99ae" },
+      { "id": "asteroid", "name": "Asteroid", "points": -3, "emoji": "🪨", "rarity": "common", "color": "#6c757d" },
+      { "id": "meteor", "name": "Meteor", "points": -5, "emoji": "🔥", "rarity": "uncommon", "color": "#ef476f" },
+      { "id": "blackhole", "name": "Black Hole", "points": -10, "emoji": "🕳️", "rarity": "rare", "color": "#111122", "deduct_life": true }
+    ]
+  },
+  "difficulty_curve": [
+    { "time_seconds": 0, "fall_speed_multiplier": 1.0, "spawn_rate_multiplier": 1.0, "note": "Baseline pace, mostly common items" },
+    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.2, "note": "Slightly faster, uncommon items start appearing" },
+    { "time_seconds": 30, "fall_speed_multiplier": 1.5, "spawn_rate_multiplier": 1.4, "note": "Rare items can now spawn, more bad items in the mix" },
+    { "time_seconds": 45, "fall_speed_multiplier": 1.8, "spawn_rate_multiplier": 1.7, "note": "Final sprint — dense field, fast falls" }
+  ],
+  "messages": {
+    "win": "Mission complete! You scooped {score} points of cosmic energy across the galaxy. 🚀",
+    "lose": "Ship's shield collapsed... You collected {score} points. The cosmos awaits another run.",
+    "restart_button": "Launch Again"
+  }
+}
