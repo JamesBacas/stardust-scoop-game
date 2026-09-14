@@ -108,21 +108,27 @@ body {
     gap: 10px;
 }
 
-.home-btn {
-    background: rgba(100, 255, 218, 0.15);
+/* Simple Clean Backspace Arrow Button */
+.back-arrow-btn {
+    background: rgba(100, 255, 218, 0.12);
     border: 1px solid var(--accent-teal);
     color: var(--accent-teal);
-    font-size: 0.78rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    padding: 4px 10px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s ease;
 }
 
-.home-btn:hover {
+.back-arrow-btn:hover {
     background: var(--accent-teal);
     color: #070f1e;
+    transform: translateX(-2px);
 }
 
 .theme-select {
@@ -146,11 +152,11 @@ body {
     text-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
 }
 
-.info-btn {
+.pause-btn, .info-btn {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-glass);
     color: var(--text-main);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 700;
     padding: 4px 10px;
     border-radius: 8px;
@@ -158,7 +164,7 @@ body {
     transition: background 0.2s;
 }
 
-.info-btn:hover {
+.pause-btn:hover, .info-btn:hover {
     background: rgba(100, 255, 218, 0.2);
     color: var(--accent-teal);
 }
@@ -326,6 +332,28 @@ body {
     display: none;
 }
 
+/* Speed Surge Rush Overlay */
+.surge-warning {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #ff0054, #ff9e00);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 900;
+    padding: 6px 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255, 0, 84, 0.9);
+    z-index: 6;
+    animation: warningPulse 0.3s infinite alternate;
+}
+
+.surge-warning.hidden {
+    display: none;
+}
+
 @keyframes warningPulse {
     from { opacity: 0.6; transform: translateX(-50%) scale(0.95); }
     to { opacity: 1; transform: translateX(-50%) scale(1.08); }
@@ -373,6 +401,30 @@ body {
     flex-direction: column;
     gap: 10px;
     align-items: center;
+}
+
+/* 3-Star Rating Display */
+.star-rating-display {
+    display: flex;
+    gap: 8px;
+    font-size: 2.2rem;
+    margin: 4px 0;
+}
+
+.star-icon {
+    color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.star-icon.active {
+    color: var(--accent-gold);
+    text-shadow: 0 0 14px var(--accent-gold);
+    animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes starPop {
+    from { transform: scale(0.5); }
+    to { transform: scale(1.2); }
 }
 
 .home-card {

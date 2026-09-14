@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 powerups: [
                     { id: "magnet", name: "Candy Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Sugar Slow-Mo", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Jelly Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 }
+                    { id: "shield", name: "Jelly Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "mystery", name: "Mystery Box", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
             difficulty_curve: [
@@ -62,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 powerups: [
                     { id: "magnet", name: "Emerald Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#52b788", size: 34 },
                     { id: "chrono", name: "Time Hourglass", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#b7e4c7", size: 34 },
-                    { id: "shield", name: "Rune Barrier", type: "shield", emoji: "🛡️", rarity: "rare", color: "#d8f3dc", size: 34 }
+                    { id: "shield", name: "Rune Barrier", type: "shield", emoji: "🛡️", rarity: "rare", color: "#d8f3dc", size: 34 },
+                    { id: "mystery", name: "Mystery Relic", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
             difficulty_curve: [
@@ -100,7 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 powerups: [
                     { id: "magnet", name: "Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Chrono Warp", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Energy Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 }
+                    { id: "shield", name: "Energy Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "mystery", name: "Mystery Crate", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
             difficulty_curve: [
@@ -138,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 powerups: [
                     { id: "magnet", name: "Pearl Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Ocean Drift", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Sub Bubble", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 }
+                    { id: "shield", name: "Sub Bubble", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "mystery", name: "Mystery Chest", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
             difficulty_curve: [
@@ -158,11 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeThemeKey = 'candy';
     let currentConfig = THEMES[activeThemeKey];
 
-    // --- Web Audio Synthesizer ---
+    // --- Web Audio Synthesizer with Pitch-Scaling Harmony ---
     class SoundEngine {
         constructor() {
             this.ctx = null;
             this.muted = false;
+            // Pentatonic scale notes for consecutive catches
+            this.scaleNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
         }
 
         init() {
@@ -200,7 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { }
         }
 
-        playCatch() { this.playTone(660, 'sine', 0.08, 0.15, 880); }
+        playCatch(streak = 0) {
+            const noteIdx = streak % this.scaleNotes.length;
+            const freq = this.scaleNotes[noteIdx];
+            this.playTone(freq, 'sine', 0.1, 0.18, freq * 1.2);
+        }
         
         playCombo(multiplier) {
             const baseFreq = 523 * (1 + multiplier * 0.15);
@@ -219,6 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
             notes.forEach((freq, idx) => {
                 setTimeout(() => this.playTone(freq, 'triangle', 0.12, 0.15), idx * 50);
             });
+        }
+
+        playSurge() {
+            this.playTone(440, 'sawtooth', 0.3, 0.25, 880);
         }
 
         playHit() { this.playTone(200, 'sawtooth', 0.22, 0.2, 70); }
@@ -252,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameTitleDisplay = document.getElementById('gameTitleDisplay');
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
+    const pauseBtn = document.getElementById('pauseBtn');
     const infoBtn = document.getElementById('infoBtn');
 
     const scoreValue = document.getElementById('scoreValue');
@@ -263,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const comboBadge = document.getElementById('comboBadge');
     const feverBadge = document.getElementById('feverBadge');
     const hazardWarning = document.getElementById('hazardWarning');
+    const surgeWarning = document.getElementById('surgeWarning');
 
     const magnetTag = document.getElementById('magnetTag');
     const chronoTag = document.getElementById('chronoTag');
@@ -275,6 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startOverlay = document.getElementById('startOverlay');
     const startBackHomeBtn = document.getElementById('startBackHomeBtn');
+    const pauseOverlay = document.getElementById('pauseOverlay');
+    const pauseHomeBtn = document.getElementById('pauseHomeBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
     const infoOverlay = document.getElementById('infoOverlay');
     const closeInfoBtn = document.getElementById('closeInfoBtn');
     const endOverlay = document.getElementById('endOverlay');
@@ -284,6 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startTitle = document.getElementById('startTitle');
     const legendGrid = document.getElementById('legendGrid');
+
+    const star1 = document.getElementById('star1');
+    const star2 = document.getElementById('star2');
+    const star3 = document.getElementById('star3');
 
     const resultBadge = document.getElementById('resultBadge');
     const resultTitle = document.getElementById('resultTitle');
@@ -302,13 +325,30 @@ document.addEventListener('DOMContentLoaded', () => {
         homeBestScore.textContent = bestScore;
         homeOverlay.classList.remove('hidden');
         startOverlay.classList.add('hidden');
+        pauseOverlay.classList.add('hidden');
         endOverlay.classList.add('hidden');
         infoOverlay.classList.add('hidden');
     }
 
+    function togglePause() {
+        if (gameState === 'PLAYING') {
+            gameState = 'PAUSED';
+            pauseOverlay.classList.remove('hidden');
+        } else if (gameState === 'PAUSED') {
+            gameState = 'PLAYING';
+            pauseOverlay.classList.add('hidden');
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+    }
+
     headerHomeBtn.addEventListener('click', openHomeHub);
     startBackHomeBtn.addEventListener('click', openHomeHub);
+    pauseHomeBtn.addEventListener('click', openHomeHub);
     endHomeBtn.addEventListener('click', openHomeHub);
+
+    pauseBtn.addEventListener('click', togglePause);
+    resumeBtn.addEventListener('click', togglePause);
 
     // Realm Cards Click Selection
     realmCards.forEach(card => {
@@ -353,7 +393,6 @@ document.addEventListener('DOMContentLoaded', () => {
         targetValue.textContent = currentConfig.target_score;
         startTitle.textContent = currentConfig.title;
 
-        // Switch Background Image Layer
         themeBgLayer.className = `theme-bg-layer theme-${activeThemeKey}`;
 
         legendGrid.innerHTML = '';
@@ -368,12 +407,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Game State Vars ---
+    let gameState = 'START';
     let score = 0;
     let lives = 3;
     let timer = 60;
     let comboStreak = 0;
     let maxComboStreak = 0;
     let isFeverMode = false;
+    let isSurgeActive = false;
 
     let powerupState = {
         magnetTimer: 0,
@@ -417,7 +458,11 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('touchstart', (e) => { audio.init(); handleTouch(e); e.preventDefault(); }, { passive: false });
     canvas.addEventListener('touchmove', (e) => { handleTouch(e); e.preventDefault(); }, { passive: false });
 
-    window.addEventListener('keydown', (e) => { audio.init(); keys[e.code] = true; });
+    window.addEventListener('keydown', (e) => {
+        audio.init();
+        keys[e.code] = true;
+        if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
+    });
     window.addEventListener('keyup', (e) => { keys[e.code] = false; });
 
     // --- Helpers ---
@@ -430,6 +475,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function triggerHazardWarning() {
         hazardWarning.classList.remove('hidden');
         setTimeout(() => hazardWarning.classList.add('hidden'), 1000);
+    }
+
+    function triggerSurgeWarning() {
+        isSurgeActive = true;
+        audio.playSurge();
+        surgeWarning.classList.remove('hidden');
+        setTimeout(() => {
+            surgeWarning.classList.add('hidden');
+            isSurgeActive = false;
+        }, 4000);
     }
 
     function getDifficultyMultiplier(elapsedSeconds) {
@@ -541,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
         comboStreak = 0;
         maxComboStreak = 0;
         isFeverMode = false;
+        isSurgeActive = false;
 
         powerupState.magnetTimer = 0;
         powerupState.chronoTimer = 0;
@@ -557,6 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState = 'PLAYING';
         updateHUD();
         homeOverlay.classList.add('hidden');
+        pauseOverlay.classList.add('hidden');
         endOverlay.classList.add('hidden');
         startOverlay.classList.add('hidden');
 
@@ -571,6 +628,16 @@ document.addEventListener('DOMContentLoaded', () => {
             bestScore = score;
             localStorage.setItem('stardust_best_score', bestScore.toString());
         }
+
+        // Calculate Star Rating
+        let starsCount = 0;
+        if (score >= currentConfig.target_score) starsCount = 1;
+        if (score >= 80) starsCount = 2;
+        if (score >= 120) starsCount = 3;
+
+        star1.classList.toggle('active', starsCount >= 1);
+        star2.classList.toggle('active', starsCount >= 2);
+        star3.classList.toggle('active', starsCount >= 3);
 
         if (isWin) {
             resultBadge.textContent = "LEVEL COMPLETE";
@@ -598,7 +665,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function update(dt) {
         if (gameState !== 'PLAYING') return;
 
+        const prevTimer = Math.ceil(timer);
         timer -= dt;
+        const curTimer = Math.ceil(timer);
+
+        // Speed Surge Rush Waves at 30s and 15s
+        if ((prevTimer > 30 && curTimer <= 30) || (prevTimer > 15 && curTimer <= 15)) {
+            triggerSurgeWarning();
+        }
+
         if (timer <= 0) {
             timer = 0;
             updateHUD();
@@ -620,7 +695,6 @@ document.addEventListener('DOMContentLoaded', () => {
         paddle.tilt = dx * 0.08;
         paddle.x += dx * 0.25;
 
-        // Parallax background movement
         if (themeBgLayer) {
             const shiftX = (paddle.x - canvas.width / 2) * -0.05;
             themeBgLayer.style.transform = `translateX(${shiftX}px)`;
@@ -628,7 +702,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paddle.scaleY += (1.0 - paddle.scaleY) * 0.15;
 
-        // Thruster Particle Generation
         if (Math.random() < 0.8) {
             thrusterParticles.push({
                 x: paddle.x + (Math.random() * 20 - 10),
@@ -646,8 +719,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const diff = getDifficultyMultiplier(elapsed);
 
         spawnTimer += dt;
-        const speedScale = powerupState.chronoTimer > 0 ? 0.5 : 1.0;
-        const currentSpawnInterval = 0.9 / diff.spawn_rate_multiplier;
+        const speedScale = powerupState.chronoTimer > 0 ? 0.5 : (isSurgeActive ? 1.8 : 1.0);
+        const currentSpawnInterval = (0.9 / diff.spawn_rate_multiplier) / (isSurgeActive ? 2.5 : 1.0);
 
         if (spawnTimer >= currentSpawnInterval) {
             spawnTimer = 0;
@@ -688,8 +761,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (item.type === 'shield') {
                         powerupState.hasShield = true;
                         addFloatingText("🛡️ SHIELD ACTIVE!", item.x, item.y, "#70d6ff", 1.2);
+                    } else if (item.type === 'mystery') {
+                        // 50% chance jackpot (+20), 50% chance bomb detonation
+                        if (Math.random() < 0.5) {
+                            score += 20;
+                            audio.playPowerup();
+                            addFloatingText("❓ MYSTERY JACKPOT! +20", item.x, item.y, "#ffd166", 1.35);
+                            createExplosion(item.x, item.y, "#ffd166", 24);
+                        } else {
+                            audio.playHit();
+                            triggerScreenShake();
+                            addFloatingText("❓ MYSTERY BOMB! -1 LIFE", item.x, item.y, "#ef476f", 1.35);
+                            createExplosion(item.x, item.y, "#ef476f", 24);
+                            lives--;
+                            if (lives <= 0) {
+                                lives = 0;
+                                updateHUD();
+                                items.splice(i, 1);
+                                triggerGameOver(false);
+                                return;
+                            }
+                        }
                     }
-                    createExplosion(item.x, item.y, item.color, 18);
                     items.splice(i, 1);
                     continue;
                 }
@@ -703,11 +796,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pointsGained = item.points * comboMult * feverMult;
                     score += pointsGained;
 
+                    audio.playCatch(comboStreak);
+
                     if (comboMult > 1 || isFeverMode) {
-                        audio.playCombo(comboMult);
                         addFloatingText(`+${pointsGained} (COMBO x${comboMult}${isFeverMode ? ' ⚡FEVER' : ''})`, item.x, item.y, item.color, 1.2);
                     } else {
-                        audio.playCatch();
                         addFloatingText(`+${pointsGained}`, item.x, item.y, item.color);
                     }
                     createExplosion(item.x, item.y, item.color, 16);

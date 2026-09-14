@@ -15,10 +15,10 @@
     <div id="starfield"></div>
 
     <div class="game-wrapper">
-        <!-- Streamlined Single-Row Control Bar -->
+        <!-- Streamlined Single-Row Control Bar with Clean Back Button -->
         <header class="game-header">
             <div class="header-left">
-                <button class="home-btn" id="headerHomeBtn" title="Return to Main Menu">🏠 Home</button>
+                <button class="back-arrow-btn" id="headerHomeBtn" title="Back to Home Hub">←</button>
                 <select id="themeSelect" class="theme-select">
                     <option value="candy">🍬 Candy Crush (Sweets)</option>
                     <option value="emerald">🏰 Emerald Kingdom (Pixel)</option>
@@ -30,7 +30,8 @@
             <h1 class="game-title" id="gameTitleDisplay">🍬 CANDY CRUSH</h1>
 
             <div class="header-right">
-                <button class="info-btn" id="infoBtn" title="View Objective & Rules">ℹ️ Objective</button>
+                <button class="pause-btn" id="pauseBtn" title="Pause Game (ESC / P)">⏸️</button>
+                <button class="info-btn" id="infoBtn" title="View Objective & Rules">ℹ️</button>
                 <div class="sound-toggle" id="soundToggle" title="Toggle Audio (SFX & Music)">
                     <span id="soundIcon">🔊</span>
                 </div>
@@ -45,7 +46,7 @@
                 <span class="hud-target">/ <span id="targetValue">50</span></span>
             </div>
 
-            <!-- Arcade Progress Bar -->
+            <!-- Arcade Progress Fill Bar -->
             <div class="progress-bar-wrap" title="Score Progress">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
@@ -74,6 +75,11 @@
             <!-- Hazard Drop Warning Overlay -->
             <div class="hazard-warning hidden" id="hazardWarning">
                 <span class="warning-icon">⚠️</span> DANGER DROP
+            </div>
+
+            <!-- Heat Wave Rush Surge Warning Overlay -->
+            <div class="surge-warning hidden" id="surgeWarning">
+                🚨 SPEED SURGE! DENSE WAVE!
             </div>
 
             <canvas id="gameCanvas" width="800" height="520"></canvas>
@@ -140,11 +146,25 @@
                         <div class="p-item">🧲 <strong>Magnet</strong></div>
                         <div class="p-item">⏳ <strong>Chrono</strong></div>
                         <div class="p-item">🛡️ <strong>Shield</strong></div>
+                        <div class="p-item">❓ <strong>Mystery Box</strong></div>
                     </div>
 
                     <div class="btn-group-row">
-                        <button class="btn btn-secondary" id="startBackHomeBtn">🏠 Home</button>
+                        <button class="btn btn-secondary" id="startBackHomeBtn">← Back</button>
                         <button class="btn btn-start" id="startBtn">🚀 Start Game</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pause Overlay Modal -->
+            <div class="overlay-screen hidden" id="pauseOverlay">
+                <div class="overlay-card">
+                    <div class="badge">GAME PAUSED</div>
+                    <h2>GAME PAUSED</h2>
+                    <p class="overlay-subtitle">Take a breather! Resume whenever you are ready.</p>
+                    <div class="btn-group-row" style="margin-top: 10px;">
+                        <button class="btn btn-secondary" id="pauseHomeBtn">← Menu</button>
+                        <button class="btn btn-start" id="resumeBtn">▶️ Resume</button>
                     </div>
                 </div>
             </div>
@@ -153,19 +173,31 @@
             <div class="overlay-screen hidden" id="infoOverlay">
                 <div class="overlay-card">
                     <div class="badge">GAME OBJECTIVE</div>
-                    <h3 style="color: var(--accent-gold); font-size: 1.2rem;">🎯 Objective & Rules</h3>
-                    <p class="overlay-subtitle" id="infoObjectiveText" style="text-align: left; margin: 8px 0;">
-                        Reach <strong>50 points</strong> within <strong>60 seconds</strong>. Avoid bad items or hazards that deduct score/lives. Catch 5 in a row for FEVER TIME!
-                    </p>
+                    <h3 style="color: var(--accent-gold); font-size: 1.2rem;">🎯 High Stakes & Star System</h3>
+                    <div style="text-align: left; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 8px 0;">
+                        <p>⭐ <strong>1-Star Rating:</strong> Reach 50 Target Points.</p>
+                        <p>⭐⭐ <strong>2-Star Rating:</strong> Reach 80 Points.</p>
+                        <p>⭐⭐⭐ <strong>3-Star Rating:</strong> Reach 120 Points!</p>
+                        <p>❓ <strong>Mystery Boxes:</strong> Catch for jackpot points (+20) or risk a surprise bomb detonation!</p>
+                        <p>🚨 <strong>Speed Surges:</strong> Watch out at 30s and 15s for dense speed surges!</p>
+                    </div>
                     <button class="btn btn-restart" id="closeInfoBtn">Got it!</button>
                 </div>
             </div>
 
-            <!-- Game Over / Victory Overlay Modal -->
+            <!-- Game Over / Victory Overlay Modal with 3-Star Rating -->
             <div class="overlay-screen hidden" id="endOverlay">
                 <div class="overlay-card">
                     <div class="result-badge" id="resultBadge">MISSION ACCOMPLISHED</div>
                     <h2 id="resultTitle">VICTORY!</h2>
+                    
+                    <!-- 3-Star Animated Rating Display -->
+                    <div class="star-rating-display" id="starRatingDisplay">
+                        <span class="star-icon" id="star1">★</span>
+                        <span class="star-icon" id="star2">★</span>
+                        <span class="star-icon" id="star3">★</span>
+                    </div>
+
                     <p class="result-msg" id="resultMsg">Mission complete!</p>
                     
                     <div class="stats-summary">
@@ -184,7 +216,7 @@
                     </div>
 
                     <div class="btn-group-row">
-                        <button class="btn btn-secondary" id="endHomeBtn">🏠 Home Menu</button>
+                        <button class="btn btn-secondary" id="endHomeBtn">← Menu</button>
                         <button class="btn btn-restart" id="restartBtn">🔄 Play Again</button>
                     </div>
                 </div>
@@ -193,7 +225,7 @@
 
         <!-- Controls Banner -->
         <div class="controls-hint">
-            <span>💻 <strong>Controls:</strong> Mouse move or <code>← / A</code> & <code>→ / D</code> keys</span>
+            <span>💻 <strong>Controls:</strong> Mouse move or <code>← / A</code> & <code>→ / D</code> keys (Press <code>ESC / P</code> to Pause)</span>
             <span>📱 <strong>Mobile:</strong> Touch & drag across screen</span>
         </div>
     </div>
