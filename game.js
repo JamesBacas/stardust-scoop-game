@@ -426,15 +426,30 @@ document.addEventListener('DOMContentLoaded', () => {
         paddle.targetX = (e.clientX - rect.left) * scaleX;
     });
 
+    function triggerHaptic(pattern = 20) {
+        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+            try { navigator.vibrate(pattern); } catch (err) {}
+        }
+    }
+
     const handleTouch = (e) => {
-        if (e.touches.length > 0) {
+        if (e.touches && e.touches.length > 0) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             paddle.targetX = (e.touches[0].clientX - rect.left) * scaleX;
         }
     };
-    canvas.addEventListener('touchstart', (e) => { audio.init(); handleTouch(e); e.preventDefault(); }, { passive: false });
-    canvas.addEventListener('touchmove', (e) => { handleTouch(e); e.preventDefault(); }, { passive: false });
+
+    [canvas, canvasContainer, window].forEach(target => {
+        if (target) {
+            target.addEventListener('touchstart', (e) => {
+                if (gameState === 'PLAYING') { audio.init(); handleTouch(e); }
+            }, { passive: true });
+            target.addEventListener('touchmove', (e) => {
+                if (gameState === 'PLAYING') handleTouch(e);
+            }, { passive: true });
+        }
+    });
 
     window.addEventListener('keydown', (e) => {
         audio.init();
@@ -445,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helpers ---
     function triggerScreenShake() {
+        triggerHaptic([45, 30, 45]);
         canvasContainer.classList.remove('shake');
         void canvasContainer.offsetWidth;
         canvasContainer.classList.add('shake');
@@ -808,6 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     score += pointsGained;
 
                     audio.playCatch(comboStreak);
+                    triggerHaptic(20);
 
                     if (comboMult > 1 || isFeverMode) {
                         addFloatingText(`+${pointsGained} (COMBO x${comboMult}${isFeverMode ? ' ⚡FEVER' : ''})`, item.x, item.y, item.color, 1.2);

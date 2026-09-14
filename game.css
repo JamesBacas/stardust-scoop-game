@@ -634,20 +634,45 @@ body {
     border-radius: 4px;
 }
 
-/* Mobile Tweaks */
+/* Mobile Touch & Ergonomics Safeguards */
+body, .game-wrapper, .canvas-container, #gameCanvas {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 @media (max-width: 600px) {
     .compact-hud {
         flex-wrap: wrap;
         gap: 6px;
+        font-size: 0.75rem;
     }
     .progress-bar-wrap {
         display: none;
     }
     .game-title {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
     .realm-cards-grid {
         grid-template-columns: 1fr;
+    }
+    .btn {
+        min-height: 48px;
+        font-size: 0.95rem;
+        padding: 12px 20px;
+    }
+    .back-arrow-btn, .pause-btn, .info-btn, .sound-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .overlay-card {
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 18px 16px;
     }
 }
 
