@@ -1,0 +1,33 @@
+{
+  "title": "Candy Collector",
+  "objective": "Catch sweet treats to reach 50 points in 60s while dodging toxic slime bombs!",
+  "target_score": 50,
+  "session_seconds": 60,
+  "starting_lives": 3,
+  "items": {
+    "good": [
+      { "id": "candy", "name": "Lollipop", "points": 1, "emoji": "🍭", "rarity": "common", "color": "#ff70a6" },
+      { "id": "donut", "name": "Glazed Donut", "points": 3, "emoji": "🍩", "rarity": "common", "color": "#ff9770" },
+      { "id": "cupcake", "name": "Sweet Cupcake", "points": 5, "emoji": "🧁", "rarity": "uncommon", "color": "#ffd670" },
+      { "id": "chocolate", "name": "Choco Bar", "points": 5, "emoji": "🍫", "rarity": "uncommon", "color": "#e9ff70" },
+      { "id": "cake", "name": "Birthday Cake", "points": 15, "emoji": "🎂", "rarity": "rare", "color": "#70d6ff" }
+    ],
+    "bad": [
+      { "id": "chili", "name": "Spicy Chili", "points": -1, "emoji": "🌶️", "rarity": "common", "color": "#ff4d4d" },
+      { "id": "trash", "name": "Apple Core", "points": -3, "emoji": "🍏", "rarity": "common", "color": "#a8db10" },
+      { "id": "slime", "name": "Toxic Slime", "points": -5, "emoji": "🧪", "rarity": "uncommon", "color": "#39ff14" },
+      { "id": "bomb", "name": "Candy Bomb", "points": -10, "emoji": "💣", "rarity": "rare", "color": "#2b2b2b", "deduct_life": true }
+    ]
+  },
+  "difficulty_curve": [
+    { "time_seconds": 0, "fall_speed_multiplier": 1.0, "spawn_rate_multiplier": 1.0 },
+    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.25 },
+    { "time_seconds": 30, "fall_speed_multiplier": 1.55, "spawn_rate_multiplier": 1.5 },
+    { "time_seconds": 45, "fall_speed_multiplier": 1.9, "spawn_rate_multiplier": 1.85 }
+  ],
+  "messages": {
+    "win": "Sugar Rush Victory! You collected {score} points of sweet treats. 🍭",
+    "lose": "Tummy ache overload... You collected {score} points. Try again!",
+    "restart_button": "Play Again"
+  }
+}

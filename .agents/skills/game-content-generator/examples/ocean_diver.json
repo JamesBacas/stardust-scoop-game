@@ -1,0 +1,33 @@
+{
+  "title": "Ocean Diver",
+  "objective": "Collect pearls and sunken treasure to reach 50 points while avoiding jellyfish and sea mines!",
+  "target_score": 50,
+  "session_seconds": 60,
+  "starting_lives": 3,
+  "items": {
+    "good": [
+      { "id": "shell", "name": "Sea Shell", "points": 1, "emoji": "🐚", "rarity": "common", "color": "#e0fbfc" },
+      { "id": "pearl", "name": "Shining Pearl", "points": 3, "emoji": "🦪", "rarity": "common", "color": "#98c1d9" },
+      { "id": "trident", "name": "Golden Trident", "points": 5, "emoji": "🔱", "rarity": "uncommon", "color": "#ffd166" },
+      { "id": "gem", "name": "Ocean Emerald", "points": 5, "emoji": "💎", "rarity": "uncommon", "color": "#06d6a0" },
+      { "id": "chest", "name": "Treasure Chest", "points": 15, "emoji": "🪙", "rarity": "rare", "color": "#ffb703" }
+    ],
+    "bad": [
+      { "id": "urchin", "name": "Sea Urchin", "points": -1, "emoji": "🦔", "rarity": "common", "color": "#3d5a80" },
+      { "id": "jellyfish", "name": "Electric Jelly", "points": -3, "emoji": "🪼", "rarity": "common", "color": "#ff006e" },
+      { "id": "shark", "name": "Great Shark", "points": -5, "emoji": "🦈", "rarity": "uncommon", "color": "#293241" },
+      { "id": "seamine", "name": "Deep Sea Mine", "points": -10, "emoji": "💥", "rarity": "rare", "color": "#d90429", "deduct_life": true }
+    ]
+  },
+  "difficulty_curve": [
+    { "time_seconds": 0, "fall_speed_multiplier": 1.0, "spawn_rate_multiplier": 1.0 },
+    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.25 },
+    { "time_seconds": 30, "fall_speed_multiplier": 1.55, "spawn_rate_multiplier": 1.5 },
+    { "time_seconds": 45, "fall_speed_multiplier": 1.9, "spawn_rate_multiplier": 1.85 }
+  ],
+  "messages": {
+    "win": "Ocean Master! You retrieved {score} points of sunken treasure. 🌊",
+    "lose": "Lost in the deep trenches... You scored {score} points. Dive again!",
+    "restart_button": "Dive Again"
+  }
+}
