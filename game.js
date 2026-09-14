@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const THEMES = {
         candy: {
             title: "🍬 CANDY CRUSH",
+            life_icon: "🩷",
             target_score: DEFAULT_TARGET_SCORE,
             session_seconds: DEFAULT_SESSION_SECONDS,
             starting_lives: DEFAULT_STARTING_LIVES,
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "magnet", name: "Candy Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Sugar Slow-Mo", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
                     { id: "shield", name: "Jelly Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "heal", name: "Sugar Heart", type: "heal", emoji: "💖", rarity: "rare", color: "#ff4d6d", size: 34 },
                     { id: "mystery", name: "Mystery Box", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
@@ -63,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         space: {
             title: "✨ STARDUST SCOOP",
+            life_icon: "⚡",
             target_score: DEFAULT_TARGET_SCORE,
             session_seconds: DEFAULT_SESSION_SECONDS,
             starting_lives: DEFAULT_STARTING_LIVES,
@@ -84,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "magnet", name: "Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Chrono Warp", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
                     { id: "shield", name: "Energy Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "heal", name: "Energy Cell", type: "heal", emoji: "🔋", rarity: "rare", color: "#00f5d4", size: 34 },
                     { id: "mystery", name: "Mystery Crate", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
@@ -97,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ocean: {
             title: "🌊 OCEAN DIVER",
+            life_icon: "🤿",
             target_score: DEFAULT_TARGET_SCORE,
             session_seconds: DEFAULT_SESSION_SECONDS,
             starting_lives: DEFAULT_STARTING_LIVES,
@@ -118,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "magnet", name: "Pearl Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
                     { id: "chrono", name: "Ocean Drift", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
                     { id: "shield", name: "Sub Bubble", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
+                    { id: "heal", name: "Oxygen Tank", type: "heal", emoji: "🫧", rarity: "rare", color: "#70d6ff", size: 34 },
                     { id: "mystery", name: "Mystery Chest", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
@@ -253,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const magnetTag = document.getElementById('magnetTag');
     const chronoTag = document.getElementById('chronoTag');
     const shieldTag = document.getElementById('shieldTag');
+    const overloadBadge = document.getElementById('overloadBadge');
 
     const homeOverlay = document.getElementById('homeOverlay');
     const homeBestScore = document.getElementById('homeBestScore');
@@ -382,6 +389,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer = DEFAULT_SESSION_SECONDS;
     let comboStreak = 0;
     let maxComboStreak = 0;
+    let badItemStreak = 0;
+    let overloadTimer = 0;
     let isFeverMode = false;
     let isSurgeActive = false;
 
@@ -537,10 +546,15 @@ document.addEventListener('DOMContentLoaded', () => {
         progressFill.style.width = `${fillPct}%`;
 
         let hearts = '';
+        const lifeIcon = currentConfig.life_icon || '❤️';
         for (let i = 0; i < currentConfig.starting_lives; i++) {
-            hearts += i < lives ? '❤️' : '🖤';
+            hearts += i < lives ? lifeIcon : '🖤';
         }
         livesValue.textContent = hearts;
+
+        const isCritical = (lives === 1);
+        canvas.classList.toggle('critical-danger-pulse', isCritical);
+        livesValue.classList.toggle('critical-lives-pulse', isCritical);
 
         const newFeverState = (comboStreak >= 5 || score >= 25);
         if (newFeverState && !isFeverMode) {
@@ -553,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const comboMult = Math.min(5, 1 + Math.floor(comboStreak / 3));
         comboBadge.textContent = `🔥 x${comboMult}`;
 
+        overloadBadge.classList.toggle('hidden', overloadTimer <= 0);
         magnetTag.classList.toggle('hidden', powerupState.magnetTimer <= 0);
         chronoTag.classList.toggle('hidden', powerupState.chronoTimer <= 0);
         shieldTag.classList.toggle('hidden', !powerupState.hasShield);
@@ -564,6 +579,8 @@ document.addEventListener('DOMContentLoaded', () => {
         timer = currentConfig.session_seconds;
         comboStreak = 0;
         maxComboStreak = 0;
+        badItemStreak = 0;
+        overloadTimer = 0;
         isFeverMode = false;
         isSurgeActive = false;
 
@@ -578,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paddle.x = canvas.width / 2;
         paddle.targetX = canvas.width / 2;
+        paddle.width = PADDLE_WIDTH;
 
         gameState = 'PLAYING';
         updateHUD();
@@ -592,6 +610,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function triggerGameOver(isWin) {
         gameState = isWin ? 'VICTORY' : 'GAMEOVER';
+
+        if (isWin && lives === currentConfig.starting_lives) {
+            score += 20;
+        }
 
         if (score > bestScore) {
             bestScore = score;
@@ -608,13 +630,20 @@ document.addEventListener('DOMContentLoaded', () => {
         star2.classList.toggle('active', starsCount >= 2);
         star3.classList.toggle('active', starsCount >= 3);
 
+        canvas.classList.remove('critical-danger-pulse');
+        livesValue.classList.remove('critical-lives-pulse');
+
         const resultBadge = document.getElementById('resultBadge');
         if (isWin) {
+            let victoryText = currentConfig.messages.win.replace('{score}', score);
+            if (lives === currentConfig.starting_lives) {
+                victoryText += " ✨ FLAWLESS BONUS (+20 PTS)!";
+            }
             resultBadge.textContent = "LEVEL COMPLETE";
             resultBadge.style.borderColor = "var(--accent-teal)";
             resultBadge.style.color = "var(--accent-teal)";
             resultTitle.textContent = "VICTORY! 🎉";
-            resultMsg.textContent = currentConfig.messages.win.replace('{score}', score);
+            resultMsg.textContent = victoryText;
             audio.playVictory();
         } else {
             resultBadge.textContent = "TRY AGAIN";
@@ -652,6 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (powerupState.magnetTimer > 0) powerupState.magnetTimer -= dt;
         if (powerupState.chronoTimer > 0) powerupState.chronoTimer -= dt;
+        if (overloadTimer > 0) overloadTimer -= dt;
+
+        paddle.width = overloadTimer > 0 ? PADDLE_WIDTH * 0.7 : PADDLE_WIDTH;
 
         updateHUD();
 
@@ -730,6 +762,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (item.type === 'shield') {
                         powerupState.hasShield = true;
                         addFloatingText("🛡️ SHIELD ACTIVE!", item.x, item.y, "#70d6ff", 1.2);
+                    } else if (item.type === 'heal') {
+                        if (lives < currentConfig.starting_lives) {
+                            lives++;
+                            addFloatingText(`+1 REPAIR (${currentConfig.life_icon || '❤️'})`, item.x, item.y, "#ff4d6d", 1.35);
+                            createExplosion(item.x, item.y, "#ff4d6d", 22);
+                        } else {
+                            score += 10;
+                            addFloatingText("MAX LIFE! +10 PTS", item.x, item.y, "#ffd166", 1.2);
+                            createExplosion(item.x, item.y, "#ffd166", 16);
+                        }
                     } else if (item.type === 'mystery') {
                         if (Math.random() < MYSTERY_JACKPOT_CHANCE) {
                             score += MYSTERY_JACKPOT_POINTS;
@@ -756,6 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (item.isGood) {
+                    badItemStreak = 0;
                     comboStreak++;
                     if (comboStreak > maxComboStreak) maxComboStreak = comboStreak;
 
@@ -774,6 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     createExplosion(item.x, item.y, item.color, 16);
                 } else {
                     comboStreak = 0;
+                    badItemStreak++;
 
                     if (powerupState.hasShield) {
                         powerupState.hasShield = false;
@@ -790,6 +834,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     createExplosion(item.x, item.y, '#ef476f', 18);
 
                     score = Math.max(0, score + item.points);
+
+                    if (badItemStreak >= 3) {
+                        badItemStreak = 0;
+                        overloadTimer = 5.0;
+                        const backlashPenalty = 10;
+                        score = Math.max(0, score - backlashPenalty);
+                        triggerScreenShake();
+                        addFloatingText(`🚨 HAZARD OVERLOAD! -${backlashPenalty} PTS & SHRUNK!`, item.x, item.y, "#ff0054", 1.45);
+                        createExplosion(item.x, item.y, "#ff0054", 28);
+                    }
 
                     if (item.deduct_life) {
                         lives--;
@@ -910,9 +964,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.beginPath();
         ctx.roundRect(-pw / 2, -ph / 2, pw, ph, [12, 12, 4, 4]);
         ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = overloadTimer > 0 ? '#ef476f' : '#ffffff';
+        ctx.lineWidth = overloadTimer > 0 ? 3 : 1.5;
         ctx.stroke();
+
+        if (overloadTimer > 0) {
+            ctx.strokeStyle = '#ef476f';
+            ctx.shadowColor = '#ef476f';
+            ctx.shadowBlur = 20;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-pw / 2 - 4, -ph / 2 - 4, pw + 8, ph + 8);
+        }
 
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(-pw / 3, -ph / 4, pw * 0.66, 3);

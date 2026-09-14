@@ -650,3 +650,31 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Critical Health & Hazard Overload Visual Effects */
+#gameCanvas.critical-danger-pulse {
+    border: 2px solid rgba(239, 71, 111, 0.85) !important;
+    box-shadow: 0 0 25px rgba(239, 71, 111, 0.6) inset, 0 0 25px rgba(239, 71, 111, 0.5) !important;
+    animation: dangerGlow 1s infinite alternate;
+}
+
+@keyframes dangerGlow {
+    0% { box-shadow: 0 0 15px rgba(239, 71, 111, 0.4) inset; }
+    100% { box-shadow: 0 0 35px rgba(239, 71, 111, 0.85) inset; }
+}
+
+.critical-lives-pulse {
+    color: #ef476f !important;
+    animation: pulseText 0.8s infinite alternate;
+}
+
+@keyframes pulseText {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+}
+
+.overload-tag {
+    background: rgba(239, 71, 111, 0.25);
+    border: 1px solid #ef476f;
+    color: #ef476f;
+}
