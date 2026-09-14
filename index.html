@@ -6,11 +6,12 @@
     <title>Stardust Scoop | Skill-Driven Modern Arcade Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="game.css">
 </head>
 <body>
-    <!-- Dynamic particle starfield background -->
+    <!-- Pixel Art Ambient Background Layer -->
+    <div id="pixelBgLayer" class="pixel-bg-layer"></div>
     <div id="starfield"></div>
 
     <div class="game-wrapper">
@@ -25,6 +26,7 @@
                 <div class="theme-selector-wrap">
                     <label for="themeSelect">THEME:</label>
                     <select id="themeSelect" class="theme-select">
+                        <option value="emerald">🏰 Emerald Kingdom (Pixel Art)</option>
                         <option value="space">🚀 Stardust Scoop (Space)</option>
                         <option value="candy">🍬 Candy Collector (Sweets)</option>
                         <option value="ocean">🌊 Ocean Diver (Deep Sea)</option>
@@ -32,7 +34,7 @@
                 </div>
             </div>
 
-            <h1 class="game-title" id="gameTitleDisplay">✨ STARDUST SCOOP</h1>
+            <h1 class="game-title" id="gameTitleDisplay">🏰 EMERALD KINGDOM</h1>
 
             <div class="header-right">
                 <div class="sound-toggle" id="soundToggle" title="Toggle Audio (SFX & Music)">
@@ -66,12 +68,18 @@
             </div>
         </div>
 
-        <!-- Power-Up & Combo Status Indicator Bar -->
+        <!-- Power-Up, Combo & Fever Mode Bar -->
         <div class="active-status-bar">
-            <div class="combo-badge" id="comboBadge">
-                <span class="combo-fire">🔥</span>
-                <span id="comboText">COMBO x1</span>
+            <div class="left-status-group">
+                <div class="combo-badge" id="comboBadge">
+                    <span class="combo-fire">🔥</span>
+                    <span id="comboText">COMBO x1</span>
+                </div>
+                <div class="fever-badge hidden" id="feverBadge">
+                    <span>⚡ FEVER TIME (2x POINTS!)</span>
+                </div>
             </div>
+
             <div class="powerup-indicators" id="powerupIndicators">
                 <span class="powerup-tag hidden" id="magnetTag">🧲 MAGNET ACTIVE</span>
                 <span class="powerup-tag hidden" id="chronoTag">⏳ CHRONO WARP</span>
@@ -81,23 +89,28 @@
 
         <!-- Main Canvas Area -->
         <div class="canvas-container" id="canvasContainer">
+            <!-- Danger Hazard Column Warning Overlay -->
+            <div class="hazard-warning hidden" id="hazardWarning">
+                <span class="warning-icon">⚠️</span> DANGER DROP
+            </div>
+
             <canvas id="gameCanvas" width="800" height="550"></canvas>
 
             <!-- Start Screen Overlay -->
             <div class="overlay-screen" id="startOverlay">
                 <div class="overlay-card">
                     <div class="badge">AGENT SKILL POWERED</div>
-                    <h2 id="startTitle">STARDUST SCOOP</h2>
-                    <p class="overlay-subtitle" id="startSubtitle">Steer your vessel, scoop energy crystals, activate magnet & slow-mo powerups, build combos!</p>
+                    <h2 id="startTitle">EMERALD KINGDOM</h2>
+                    <p class="overlay-subtitle" id="startSubtitle">Steer your vessel, scoop relics, trigger Fever Time & Powerups!</p>
                     
                     <div class="legend-grid" id="legendGrid">
                         <!-- Populated dynamically based on theme selection -->
                     </div>
 
                     <div class="powerup-legend">
-                        <div class="p-item">🧲 <strong>Magnet:</strong> Pulls good items</div>
-                        <div class="p-item">⏳ <strong>Chrono:</strong> Slows fall speed</div>
-                        <div class="p-item">🛡️ <strong>Shield:</strong> Absorbs 1 hit</div>
+                        <div class="p-item">🧲 <strong>Magnet:</strong> Attracts items</div>
+                        <div class="p-item">⏳ <strong>Chrono:</strong> Slows speed</div>
+                        <div class="p-item">🛡️ <strong>Shield:</strong> Absorbs hit</div>
                     </div>
 
                     <button class="btn btn-start" id="startBtn">🚀 Start Game</button>

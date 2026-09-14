@@ -1,16 +1,17 @@
-/* Modern Arcade UI & Game Styling */
+/* Modern Arcade & Pixel Art UI Styling */
 :root {
-    --bg-dark: #070f1e;
-    --bg-card: rgba(13, 25, 48, 0.88);
-    --accent-teal: #64ffda;
-    --accent-blue: #00b4d8;
-    --accent-purple: #bd5fff;
+    --bg-dark: #06140e;
+    --bg-card: rgba(11, 37, 26, 0.88);
+    --accent-teal: #52b788;
+    --accent-mint: #74c69d;
+    --accent-jade: #b7e4c7;
     --accent-gold: #ffd166;
     --accent-red: #ef476f;
-    --accent-green: #06d6a0;
-    --text-main: #e6f1ff;
-    --text-muted: #8892b0;
-    --border-glass: rgba(100, 255, 218, 0.25);
+    --accent-blue: #00b4d8;
+    --accent-purple: #bd5fff;
+    --text-main: #d8f3dc;
+    --text-muted: #74c69d;
+    --border-glass: rgba(82, 183, 136, 0.3);
     --font-heading: 'Orbitron', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -35,7 +36,22 @@ body {
     padding: 12px;
 }
 
-/* Background Particle canvas */
+/* Uploaded Pixel Art Background Layer */
+.pixel-bg-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    background: url('assets/bg.png') center bottom / cover no-repeat;
+    image-rendering: pixelated;
+    opacity: 0.45;
+    filter: saturate(1.2) contrast(1.1) brightness(0.85);
+    transition: transform 0.1s ease-out;
+}
+
+/* Dynamic Particle Starfield Layer */
 #starfield {
     position: fixed;
     top: 0;
@@ -43,7 +59,7 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    background: radial-gradient(circle at center, #0e1e38 0%, #050b14 100%);
+    background: radial-gradient(circle at center, rgba(18, 53, 38, 0.4) 0%, rgba(6, 20, 14, 0.85) 100%);
 }
 
 .game-wrapper {
@@ -54,7 +70,7 @@ body {
     gap: 10px;
 }
 
-/* Modern Cyber Header */
+/* Modern Cyber / Pixel Header */
 .game-header {
     display: flex;
     justify-content: space-between;
@@ -64,7 +80,7 @@ body {
     border: 1px solid var(--border-glass);
     border-radius: 14px;
     backdrop-filter: blur(14px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
 }
 
 .header-left {
@@ -78,7 +94,7 @@ body {
     font-weight: 800;
     letter-spacing: 1px;
     color: var(--accent-teal);
-    background: rgba(100, 255, 218, 0.12);
+    background: rgba(82, 183, 136, 0.15);
     border: 1px solid var(--accent-teal);
     padding: 4px 10px;
     border-radius: 20px;
@@ -111,7 +127,7 @@ body {
 }
 
 .theme-select {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     color: var(--accent-teal);
     border: 1px solid var(--border-glass);
     border-radius: 8px;
@@ -132,7 +148,7 @@ body {
     font-size: 1.3rem;
     letter-spacing: 1.5px;
     color: #ffffff;
-    text-shadow: 0 0 12px rgba(100, 255, 218, 0.5);
+    text-shadow: 0 0 12px rgba(82, 183, 136, 0.6);
 }
 
 .sound-toggle {
@@ -146,13 +162,13 @@ body {
 }
 
 .sound-toggle:hover {
-    background: rgba(100, 255, 218, 0.2);
+    background: rgba(82, 183, 136, 0.2);
     border-color: var(--accent-teal);
 }
 
 /* Objective Bar */
 .objective-bar {
-    background: rgba(100, 255, 218, 0.06);
+    background: rgba(82, 183, 136, 0.08);
     border: 1px dashed var(--border-glass);
     border-radius: 10px;
     padding: 8px 16px;
@@ -199,7 +215,7 @@ body {
 }
 
 .glow-teal {
-    text-shadow: 0 0 10px rgba(100, 255, 218, 0.6);
+    text-shadow: 0 0 10px rgba(82, 183, 136, 0.6);
 }
 
 .timer-pulse {
@@ -211,13 +227,19 @@ body {
     letter-spacing: 2px;
 }
 
-/* Combo & Powerup Indicator Bar */
+/* Combo & Fever Status Bar */
 .active-status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 28px;
+    min-height: 30px;
     padding: 0 4px;
+}
+
+.left-status-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .combo-badge {
@@ -239,6 +261,30 @@ body {
     transform: scale(1.18);
 }
 
+/* Fever Time Banner */
+.fever-badge {
+    background: linear-gradient(90deg, #52b788, #74c69d, #ffd166, #ff0054, #bd5fff);
+    background-size: 300% 300%;
+    animation: rainbowShift 2s ease infinite;
+    color: #000000;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 4px 14px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255, 209, 102, 0.8);
+}
+
+.fever-badge.hidden {
+    display: none;
+}
+
+@keyframes rainbowShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .powerup-indicators {
     display: flex;
     gap: 8px;
@@ -250,10 +296,10 @@ body {
     font-weight: 700;
     padding: 3px 10px;
     border-radius: 12px;
-    background: rgba(100, 255, 218, 0.2);
+    background: rgba(82, 183, 136, 0.2);
     color: var(--accent-teal);
     border: 1px solid var(--accent-teal);
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    box-shadow: 0 0 10px rgba(82, 183, 136, 0.3);
     animation: flashTag 1s infinite alternate;
 }
 
@@ -266,7 +312,7 @@ body {
     to { opacity: 1; }
 }
 
-/* Canvas Area & Shake Effect */
+/* Canvas Area & Warning Overlays */
 .canvas-container {
     position: relative;
     width: 100%;
@@ -275,8 +321,8 @@ body {
     border-radius: 16px;
     overflow: hidden;
     border: 2px solid var(--border-glass);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
-    background: #030812;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+    background: rgba(4, 15, 10, 0.75);
 }
 
 .canvas-container.shake {
@@ -290,6 +336,34 @@ body {
     60% { transform: translate(-4px, 2px); }
     80% { transform: translate(4px, -2px); }
     100% { transform: translate(0, 0); }
+}
+
+/* Danger Drop Indicator */
+.hazard-warning {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(239, 71, 111, 0.9);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 16px;
+    border-radius: 20px;
+    border: 1px solid #ffffff;
+    box-shadow: 0 0 15px rgba(239, 71, 111, 0.8);
+    z-index: 5;
+    animation: warningPulse 0.4s infinite alternate;
+}
+
+.hazard-warning.hidden {
+    display: none;
+}
+
+@keyframes warningPulse {
+    from { opacity: 0.6; transform: translateX(-50%) scale(0.95); }
+    to { opacity: 1; transform: translateX(-50%) scale(1.08); }
 }
 
 #gameCanvas {
@@ -306,7 +380,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(7, 15, 30, 0.94);
+    background: rgba(6, 20, 14, 0.94);
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
@@ -323,9 +397,9 @@ body {
 }
 
 .overlay-card {
-    background: rgba(13, 25, 48, 0.96);
+    background: rgba(11, 37, 26, 0.96);
     border: 1px solid var(--accent-teal);
-    box-shadow: 0 0 30px rgba(100, 255, 218, 0.25);
+    box-shadow: 0 0 30px rgba(82, 183, 136, 0.3);
     border-radius: 18px;
     padding: 24px 28px;
     max-width: 500px;
@@ -343,7 +417,7 @@ body {
     letter-spacing: 1.5px;
     padding: 4px 12px;
     border-radius: 20px;
-    background: rgba(100, 255, 218, 0.15);
+    background: rgba(82, 183, 136, 0.15);
     color: var(--accent-teal);
     border: 1px solid var(--accent-teal);
 }
@@ -366,7 +440,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px 12px;
     width: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.35);
     padding: 10px 14px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -416,14 +490,14 @@ body {
 }
 
 .btn-start, .btn-restart {
-    background: linear-gradient(135deg, var(--accent-teal) 0%, #00b4d8 100%);
-    color: #070f1e;
-    box-shadow: 0 4px 18px rgba(100, 255, 218, 0.45);
+    background: linear-gradient(135deg, var(--accent-teal) 0%, #2d6a4f 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(82, 183, 136, 0.45);
 }
 
 .btn-start:hover, .btn-restart:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(100, 255, 218, 0.65);
+    box-shadow: 0 6px 24px rgba(82, 183, 136, 0.65);
 }
 
 .btn-start:active, .btn-restart:active {

@@ -1,0 +1,38 @@
+{
+  "title": "Emerald Kingdom",
+  "objective": "Scoop moonstones, emerald gems, and crowns to reach 50 points while dodging poison flasks and cursed orbs!",
+  "target_score": 50,
+  "session_seconds": 60,
+  "starting_lives": 3,
+  "items": {
+    "good": [
+      { "id": "moonstone", "name": "Moonstone", "points": 1, "emoji": "🌙", "rarity": "common", "color": "#b7e4c7", "size": 28 },
+      { "id": "emerald", "name": "Emerald Gem", "points": 3, "emoji": "💎", "rarity": "common", "color": "#52b788", "size": 30 },
+      { "id": "scroll", "name": "Ancient Scroll", "points": 5, "emoji": "📜", "rarity": "uncommon", "color": "#d8f3dc", "size": 32 },
+      { "id": "blade", "name": "Mythic Blade", "points": 5, "emoji": "🗡️", "rarity": "uncommon", "color": "#74c69d", "size": 32 },
+      { "id": "crown", "name": "Royal Crown", "points": 15, "emoji": "👑", "rarity": "rare", "color": "#ffd166", "size": 36 }
+    ],
+    "bad": [
+      { "id": "web", "name": "Spur Debris", "points": -1, "emoji": "🕸️", "rarity": "common", "color": "#406a56", "size": 28 },
+      { "id": "poison", "name": "Poison Flask", "points": -3, "emoji": "☠️", "rarity": "common", "color": "#2d6a4f", "size": 32 },
+      { "id": "curse", "name": "Dark Curse", "points": -5, "emoji": "⚡", "rarity": "uncommon", "color": "#95d5b2", "size": 34 },
+      { "id": "orb", "name": "Cursed Orb", "points": -10, "emoji": "👁️", "rarity": "rare", "color": "#081c15", "size": 38, "deduct_life": true }
+    ],
+    "powerups": [
+      { "id": "magnet", "name": "Emerald Magnet", "type": "magnet", "emoji": "🧲", "rarity": "uncommon", "color": "#52b788", "size": 34 },
+      { "id": "chrono", "name": "Time Hourglass", "type": "chrono", "emoji": "⏳", "rarity": "uncommon", "color": "#b7e4c7", "size": 34 },
+      { "id": "shield", "name": "Rune Barrier", "type": "shield", "emoji": "🛡️", "rarity": "rare", "color": "#d8f3dc", "size": 34 }
+    ]
+  },
+  "difficulty_curve": [
+    { "time_seconds": 0, "fall_speed_multiplier": 1.0, "spawn_rate_multiplier": 1.0 },
+    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.25 },
+    { "time_seconds": 30, "fall_speed_multiplier": 1.55, "spawn_rate_multiplier": 1.5 },
+    { "time_seconds": 45, "fall_speed_multiplier": 1.9, "spawn_rate_multiplier": 1.85 }
+  ],
+  "messages": {
+    "win": "Kingdom Restored! You collected {score} points of emerald power for the realm. 🏰",
+    "lose": "The castle fell into darkness... You collected {score} points. Try again!",
+    "restart_button": "Defend Realm"
+  }
+}
