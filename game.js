@@ -1,12 +1,37 @@
 /* Modern Arcade Engine - Stardust Scoop & Multi-Theme Skill Arcade */
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Named Game Constants ---
+    const DEFAULT_TARGET_SCORE = 50;
+    const DEFAULT_SESSION_SECONDS = 60;
+    const DEFAULT_STARTING_LIVES = 3;
+
+    const PADDLE_WIDTH = 120;
+    const PADDLE_HEIGHT = 24;
+    const POWERUP_SPAWN_CHANCE = 0.10;
+    const GOOD_ITEM_SPAWN_CHANCE = 0.65;
+    const RARE_RARITY_THRESHOLD = 0.88;
+    const UNCOMMON_RARITY_THRESHOLD = 0.58;
+
+    const TWO_STAR_SCORE_THRESHOLD = 80;
+    const THREE_STAR_SCORE_THRESHOLD = 120;
+
+    const MYSTERY_JACKPOT_CHANCE = 0.5;
+    const MYSTERY_JACKPOT_POINTS = 20;
+
+    const DEFAULT_DIFFICULTY_CURVE = [
+        { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
+        { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
+        { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
+        { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
+    ];
+
     // --- Predefined Skill Themes ---
     const THEMES = {
         candy: {
             title: "🍬 CANDY CRUSH",
-            target_score: 50,
-            session_seconds: 60,
-            starting_lives: 3,
+            target_score: DEFAULT_TARGET_SCORE,
+            session_seconds: DEFAULT_SESSION_SECONDS,
+            starting_lives: DEFAULT_STARTING_LIVES,
             items: {
                 good: [
                     { id: "grape", name: "Juicy Grape", points: 1, emoji: "🍇", rarity: "common", color: "#bd5fff", size: 28 },
@@ -28,12 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "mystery", name: "Mystery Box", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
-            difficulty_curve: [
-                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
-            ],
+            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
             messages: {
                 win: "Sugar Rush Victory! You collected {score} points of juicy candies. 🍬",
                 lose: "Tummy ache overload... You collected {score} points. Try again!",
@@ -41,50 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
-        emerald: {
-            title: "🏰 EMERALD KINGDOM",
-            target_score: 50,
-            session_seconds: 60,
-            starting_lives: 3,
-            items: {
-                good: [
-                    { id: "moonstone", name: "Moonstone", points: 1, emoji: "🌙", rarity: "common", color: "#b7e4c7", size: 28 },
-                    { id: "emerald", name: "Emerald Gem", points: 3, emoji: "💎", rarity: "common", color: "#52b788", size: 30 },
-                    { id: "scroll", name: "Ancient Scroll", points: 5, emoji: "📜", rarity: "uncommon", color: "#d8f3dc", size: 32 },
-                    { id: "blade", name: "Mythic Blade", points: 5, emoji: "🗡️", rarity: "uncommon", color: "#74c69d", size: 32 },
-                    { id: "crown", name: "Royal Crown", points: 15, emoji: "👑", rarity: "rare", color: "#ffd166", size: 36 }
-                ],
-                bad: [
-                    { id: "web", name: "Spur Debris", points: -1, emoji: "🕸️", rarity: "common", color: "#406a56", size: 28 },
-                    { id: "poison", name: "Poison Flask", points: -3, emoji: "☠️", rarity: "common", color: "#2d6a4f", size: 32 },
-                    { id: "curse", name: "Dark Curse", points: -5, emoji: "⚡", rarity: "uncommon", color: "#95d5b2", size: 34 },
-                    { id: "orb", name: "Cursed Orb", points: -10, emoji: "👁️", rarity: "rare", color: "#081c15", size: 38, deduct_life: true }
-                ],
-                powerups: [
-                    { id: "magnet", name: "Emerald Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#52b788", size: 34 },
-                    { id: "chrono", name: "Time Hourglass", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#b7e4c7", size: 34 },
-                    { id: "shield", name: "Rune Barrier", type: "shield", emoji: "🛡️", rarity: "rare", color: "#d8f3dc", size: 34 },
-                    { id: "mystery", name: "Mystery Relic", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
-                ]
-            },
-            difficulty_curve: [
-                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
-            ],
-            messages: {
-                win: "Kingdom Restored! You collected {score} points of emerald power for the realm. 🏰",
-                lose: "The castle fell into darkness... You collected {score} points. Try again!",
-                restart_button: "Defend Realm"
-            }
-        },
-
         space: {
             title: "✨ STARDUST SCOOP",
-            target_score: 50,
-            session_seconds: 60,
-            starting_lives: 3,
+            target_score: DEFAULT_TARGET_SCORE,
+            session_seconds: DEFAULT_SESSION_SECONDS,
+            starting_lives: DEFAULT_STARTING_LIVES,
             items: {
                 good: [
                     { id: "stardust", name: "Stardust", points: 1, emoji: "✨", rarity: "common", color: "#64ffda", size: 28 },
@@ -106,12 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "mystery", name: "Mystery Crate", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
-            difficulty_curve: [
-                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
-            ],
+            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
             messages: {
                 win: "Mission complete! You scooped {score} points of cosmic energy across the galaxy. 🚀",
                 lose: "Ship's shield collapsed... You collected {score} points. The cosmos awaits another run.",
@@ -121,16 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ocean: {
             title: "🌊 OCEAN DIVER",
-            target_score: 50,
-            session_seconds: 60,
-            starting_lives: 3,
+            target_score: DEFAULT_TARGET_SCORE,
+            session_seconds: DEFAULT_SESSION_SECONDS,
+            starting_lives: DEFAULT_STARTING_LIVES,
             items: {
                 good: [
                     { id: "shell", name: "Sea Shell", points: 1, emoji: "🐚", rarity: "common", color: "#e0fbfc", size: 28 },
                     { id: "pearl", name: "Shining Pearl", points: 3, emoji: "🦪", rarity: "common", color: "#98c1d9", size: 30 },
                     { id: "trident", name: "Golden Trident", points: 5, emoji: "🔱", rarity: "uncommon", color: "#ffd166", size: 32 },
-                    { id: "gem", "name": "Ocean Emerald", points: 5, emoji: "💎", rarity: "uncommon", color: "#06d6a0", size: 32 },
-                    { id: "chest", "name": "Treasure Chest", points: 15, emoji: "🪙", rarity: "rare", color: "#ffb703", size: 36 }
+                    { id: "gem", name: "Ocean Emerald", points: 5, emoji: "💎", rarity: "uncommon", color: "#06d6a0", size: 32 },
+                    { id: "chest", name: "Treasure Chest", points: 15, emoji: "🪙", rarity: "rare", color: "#ffb703", size: 36 }
                 ],
                 bad: [
                     { id: "urchin", name: "Sea Urchin", points: -1, emoji: "🦔", rarity: "common", color: "#3d5a80", size: 28 },
@@ -145,12 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "mystery", name: "Mystery Chest", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
                 ]
             },
-            difficulty_curve: [
-                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
-            ],
+            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
             messages: {
                 win: "Ocean Master! You retrieved {score} points of sunken treasure. 🌊",
                 lose: "Lost in the deep trenches... You scored {score} points. Dive again!",
@@ -167,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         constructor() {
             this.ctx = null;
             this.muted = false;
-            // Pentatonic scale notes for consecutive catches
             this.scaleNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
         }
 
@@ -308,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const star2 = document.getElementById('star2');
     const star3 = document.getElementById('star3');
 
-    const resultBadge = document.getElementById('resultBadge');
     const resultTitle = document.getElementById('resultTitle');
     const resultMsg = document.getElementById('resultMsg');
     const finalScore = document.getElementById('finalScore');
@@ -342,10 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    headerHomeBtn.addEventListener('click', openHomeHub);
-    startBackHomeBtn.addEventListener('click', openHomeHub);
-    pauseHomeBtn.addEventListener('click', openHomeHub);
-    endHomeBtn.addEventListener('click', openHomeHub);
+    // Consolidated Home Navigation Event Listeners
+    [headerHomeBtn, startBackHomeBtn, pauseHomeBtn, endHomeBtn].forEach(btn => {
+        if (btn) btn.addEventListener('click', openHomeHub);
+    });
 
     pauseBtn.addEventListener('click', togglePause);
     resumeBtn.addEventListener('click', togglePause);
@@ -409,8 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Game State Vars ---
     let gameState = 'START';
     let score = 0;
-    let lives = 3;
-    let timer = 60;
+    let lives = DEFAULT_STARTING_LIVES;
+    let timer = DEFAULT_SESSION_SECONDS;
     let comboStreak = 0;
     let maxComboStreak = 0;
     let isFeverMode = false;
@@ -433,8 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const paddle = {
         x: canvas.width / 2,
         y: canvas.height - 45,
-        width: 120,
-        height: 24,
+        width: PADDLE_WIDTH,
+        height: PADDLE_HEIGHT,
         targetX: canvas.width / 2,
         speed: 700,
         tilt: 0,
@@ -499,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRandomItem(elapsedSeconds) {
-        if (Math.random() < 0.10) {
+        if (Math.random() < POWERUP_SPAWN_CHANCE) {
             const puPool = currentConfig.items.powerups;
             const selectedPu = puPool[Math.floor(Math.random() * puPool.length)];
             return {
@@ -511,13 +480,13 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        const isGood = Math.random() < 0.65;
+        const isGood = Math.random() < GOOD_ITEM_SPAWN_CHANCE;
         const pool = isGood ? currentConfig.items.good : currentConfig.items.bad;
 
         const rarityRoll = Math.random();
         let rarityFilter = 'common';
-        if (rarityRoll > 0.88 && elapsedSeconds > 20) rarityFilter = 'rare';
-        else if (rarityRoll > 0.58) rarityFilter = 'uncommon';
+        if (rarityRoll > RARE_RARITY_THRESHOLD && elapsedSeconds > 20) rarityFilter = 'rare';
+        else if (rarityRoll > UNCOMMON_RARITY_THRESHOLD) rarityFilter = 'uncommon';
 
         const filtered = pool.filter(i => i.rarity === rarityFilter);
         const selected = filtered.length > 0 ? filtered[Math.floor(Math.random() * filtered.length)] : pool[0];
@@ -629,16 +598,17 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('stardust_best_score', bestScore.toString());
         }
 
-        // Calculate Star Rating
+        // Calculate Star Rating using Named Threshold Constants
         let starsCount = 0;
         if (score >= currentConfig.target_score) starsCount = 1;
-        if (score >= 80) starsCount = 2;
-        if (score >= 120) starsCount = 3;
+        if (score >= TWO_STAR_SCORE_THRESHOLD) starsCount = 2;
+        if (score >= THREE_STAR_SCORE_THRESHOLD) starsCount = 3;
 
         star1.classList.toggle('active', starsCount >= 1);
         star2.classList.toggle('active', starsCount >= 2);
         star3.classList.toggle('active', starsCount >= 3);
 
+        const resultBadge = document.getElementById('resultBadge');
         if (isWin) {
             resultBadge.textContent = "LEVEL COMPLETE";
             resultBadge.style.borderColor = "var(--accent-teal)";
@@ -669,7 +639,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timer -= dt;
         const curTimer = Math.ceil(timer);
 
-        // Speed Surge Rush Waves at 30s and 15s
         if ((prevTimer > 30 && curTimer <= 30) || (prevTimer > 15 && curTimer <= 15)) {
             triggerSurgeWarning();
         }
@@ -708,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 y: paddle.y + paddle.height / 2,
                 vx: -paddle.tilt * 0.5 + (Math.random() * 20 - 10),
                 vy: 60 + Math.random() * 80,
-                color: activeThemeKey === 'candy' ? '#ff70a6' : (activeThemeKey === 'emerald' ? '#52b788' : '#64ffda'),
+                color: activeThemeKey === 'candy' ? '#ff70a6' : '#64ffda',
                 radius: 2 + Math.random() * 3,
                 alpha: 1,
                 life: 0.3
@@ -762,11 +731,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         powerupState.hasShield = true;
                         addFloatingText("🛡️ SHIELD ACTIVE!", item.x, item.y, "#70d6ff", 1.2);
                     } else if (item.type === 'mystery') {
-                        // 50% chance jackpot (+20), 50% chance bomb detonation
-                        if (Math.random() < 0.5) {
-                            score += 20;
+                        if (Math.random() < MYSTERY_JACKPOT_CHANCE) {
+                            score += MYSTERY_JACKPOT_POINTS;
                             audio.playPowerup();
-                            addFloatingText("❓ MYSTERY JACKPOT! +20", item.x, item.y, "#ffd166", 1.35);
+                            addFloatingText(`❓ MYSTERY JACKPOT! +${MYSTERY_JACKPOT_POINTS}`, item.x, item.y, "#ffd166", 1.35);
                             createExplosion(item.x, item.y, "#ffd166", 24);
                         } else {
                             audio.playHit();
@@ -821,6 +789,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     addFloatingText(`${item.points}`, item.x, item.y, '#ef476f');
                     createExplosion(item.x, item.y, '#ef476f', 18);
 
+                    score = Math.max(0, score + item.points);
+
                     if (item.deduct_life) {
                         lives--;
                         if (lives <= 0) {
@@ -833,7 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                if (score >= currentConfig.target_score && lives > 0) {
+                if (score >= THREE_STAR_SCORE_THRESHOLD && lives > 0) {
                     items.splice(i, 1);
                     triggerGameOver(true);
                     return;
@@ -922,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
 
-        ctx.shadowColor = activeThemeKey === 'candy' ? '#ff70a6' : (activeThemeKey === 'emerald' ? '#52b788' : '#64ffda');
+        ctx.shadowColor = activeThemeKey === 'candy' ? '#ff70a6' : '#64ffda';
         ctx.shadowBlur = 14;
 
         const vesselGrad = ctx.createLinearGradient(-pw / 2, 0, pw / 2, 0);
@@ -930,10 +900,6 @@ document.addEventListener('DOMContentLoaded', () => {
             vesselGrad.addColorStop(0, '#ff70a6');
             vesselGrad.addColorStop(0.5, '#ffd166');
             vesselGrad.addColorStop(1, '#ff70a6');
-        } else if (activeThemeKey === 'emerald') {
-            vesselGrad.addColorStop(0, '#2d6a4f');
-            vesselGrad.addColorStop(0.5, '#52b788');
-            vesselGrad.addColorStop(1, '#2d6a4f');
         } else {
             vesselGrad.addColorStop(0, '#00b4d8');
             vesselGrad.addColorStop(0.5, '#64ffda');

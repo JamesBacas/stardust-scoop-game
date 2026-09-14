@@ -44,8 +44,8 @@ Per **Part 2** of the assignment requirements, this game's content, point distri
 ### What is an Agent Skill?
 An Agent Skill is a structured instruction package (located in `.agents/skills/`) that teaches an AI model how to generate consistent, high-quality, domain-specific content every time.
 
-- **Skill Definition**: [.agents/skills/game-content-generator/SKILL.md](.agents/skills/game-content-generator/SKILL.md)
-- **Generated Schema**: [.agents/skills/game-content-generator/examples/stardust_scoop.json](.agents/skills/game-content-generator/examples/stardust_scoop.json)
+- **Skill Definition (agentskills.io Spec)**: [skills/game-content-generator/SKILL.md](skills/game-content-generator/SKILL.md)
+- **Reference Templates**: [skills/game-content-generator/references/TEMPLATES.md](skills/game-content-generator/references/TEMPLATES.md)
 
 ---
 
@@ -54,6 +54,19 @@ An Agent Skill is a structured instruction package (located in `.agents/skills/`
 - **Zero External Dependencies**: Pure vanilla JavaScript (ES6+), HTML5 Canvas, and CSS3.
 - **Procedural Audio**: Custom retro sound effects generated programmatically via the native browser **Web Audio API** (catch tones, powerups, damage hits, victory fanfare, and game over sounds).
 - **Restart Mechanism**: Full zero-state reset routine triggered by the **"Launch Again"** button on the game over screen.
+
+---
+
+## 🐛 Bug Fix & Playtesting Log
+
+- **Bug 1**: Scoring target cut off gameplay at 50 points, preventing players from accumulating enough points to achieve 2-star (80 pts) or 3-star (120 pts) ratings.
+- **Fix**: Updated game loop logic in `game.js` so reaching minimum target score allows gameplay to continue up to the timer expiration or 3-star threshold (120 pts), allowing players to achieve all star ratings.
+- **Bug 2**: Bad items displayed negative floating point values on collision but failed to deduct points from the player's score.
+- **Fix**:
+  ```javascript
+  score = Math.max(0, score + item.points);
+  ```
+- **Cleanup**: Removed the legacy Emerald Kingdom theme to streamline active arcade realms (Candy Crush, Stardust Scoop, Ocean Diver).
 
 ---
 

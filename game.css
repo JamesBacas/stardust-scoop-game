@@ -50,12 +50,7 @@ body {
     transition: background-image 0.4s ease, transform 0.1s ease-out;
 }
 
-/* 4 Custom Theme Background Presets */
-.theme-emerald {
-    background-image: url('assets/bg.png');
-    image-rendering: pixelated;
-}
-
+/* 3 Custom Theme Background Presets */
 .theme-candy {
     background-image: url('assets/candy-bg.png');
     opacity: 0.65;
