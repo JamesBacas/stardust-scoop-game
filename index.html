@@ -11,22 +11,23 @@
 </head>
 <body>
     <!-- Dynamic Theme Background Layer -->
-    <div id="themeBgLayer" class="theme-bg-layer theme-emerald"></div>
+    <div id="themeBgLayer" class="theme-bg-layer theme-candy"></div>
     <div id="starfield"></div>
 
     <div class="game-wrapper">
         <!-- Streamlined Single-Row Control Bar -->
         <header class="game-header">
             <div class="header-left">
+                <button class="home-btn" id="headerHomeBtn" title="Return to Main Menu">🏠 Home</button>
                 <select id="themeSelect" class="theme-select">
-                    <option value="emerald">🏰 Emerald Kingdom (Pixel)</option>
                     <option value="candy">🍬 Candy Crush (Sweets)</option>
+                    <option value="emerald">🏰 Emerald Kingdom (Pixel)</option>
                     <option value="space">🚀 Stardust Scoop (Space)</option>
                     <option value="ocean">🌊 Ocean Diver (Sea)</option>
                 </select>
             </div>
 
-            <h1 class="game-title" id="gameTitleDisplay">🏰 EMERALD KINGDOM</h1>
+            <h1 class="game-title" id="gameTitleDisplay">🍬 CANDY CRUSH</h1>
 
             <div class="header-right">
                 <button class="info-btn" id="infoBtn" title="View Objective & Rules">ℹ️ Objective</button>
@@ -77,11 +78,58 @@
 
             <canvas id="gameCanvas" width="800" height="520"></canvas>
 
+            <!-- Home Screen / Main Menu Overlay Hub -->
+            <div class="overlay-screen" id="homeOverlay">
+                <div class="overlay-card home-card">
+                    <div class="badge">AGENT SKILL ARCADE HUB</div>
+                    <h2>ARCADE REALM HUB</h2>
+                    <p class="overlay-subtitle">Select your game world powered by AI Agent Skill JSON specifications!</p>
+                    
+                    <!-- 4 Theme Realm Cards -->
+                    <div class="realm-cards-grid">
+                        <div class="realm-card active" data-theme="candy">
+                            <span class="realm-icon">🍬</span>
+                            <div class="realm-info">
+                                <strong>Candy Crush</strong>
+                                <span>Gummy Catch</span>
+                            </div>
+                        </div>
+                        <div class="realm-card" data-theme="emerald">
+                            <span class="realm-icon">🏰</span>
+                            <div class="realm-info">
+                                <strong>Emerald Kingdom</strong>
+                                <span>Pixel Ruins</span>
+                            </div>
+                        </div>
+                        <div class="realm-card" data-theme="space">
+                            <span class="realm-icon">🚀</span>
+                            <div class="realm-info">
+                                <strong>Stardust Scoop</strong>
+                                <span>Cosmic Space</span>
+                            </div>
+                        </div>
+                        <div class="realm-card" data-theme="ocean">
+                            <span class="realm-icon">🌊</span>
+                            <div class="realm-info">
+                                <strong>Ocean Diver</strong>
+                                <span>Deep Trench</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="home-stat-bar">
+                        <span>🏆 Best High Score: <strong id="homeBestScore" style="color: var(--accent-gold);">0</strong> pts</span>
+                    </div>
+
+                    <button class="btn btn-start" id="homeStartBtn">🎮 Launch Game Realm</button>
+                </div>
+            </div>
+
             <!-- Start Screen Overlay -->
-            <div class="overlay-screen" id="startOverlay">
+            <div class="overlay-screen hidden" id="startOverlay">
                 <div class="overlay-card">
                     <div class="badge">AGENT SKILL POWERED</div>
-                    <h2 id="startTitle">EMERALD KINGDOM</h2>
+                    <h2 id="startTitle">CANDY CRUSH</h2>
                     <p class="overlay-subtitle" id="startSubtitle">Catch items, trigger Fever Time & Powerups!</p>
                     
                     <div class="legend-grid" id="legendGrid">
@@ -94,7 +142,10 @@
                         <div class="p-item">🛡️ <strong>Shield</strong></div>
                     </div>
 
-                    <button class="btn btn-start" id="startBtn">🚀 Start Game</button>
+                    <div class="btn-group-row">
+                        <button class="btn btn-secondary" id="startBackHomeBtn">🏠 Home</button>
+                        <button class="btn btn-start" id="startBtn">🚀 Start Game</button>
+                    </div>
                 </div>
             </div>
 
@@ -132,7 +183,10 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-restart" id="restartBtn">🔄 Play Again</button>
+                    <div class="btn-group-row">
+                        <button class="btn btn-secondary" id="endHomeBtn">🏠 Home Menu</button>
+                        <button class="btn btn-restart" id="restartBtn">🔄 Play Again</button>
+                    </div>
                 </div>
             </div>
         </div>

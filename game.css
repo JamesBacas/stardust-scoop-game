@@ -45,12 +45,12 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.5;
+    opacity: 0.55;
     filter: saturate(1.2) contrast(1.1) brightness(0.85);
     transition: background-image 0.4s ease, transform 0.1s ease-out;
 }
 
-/* Theme Background Presets */
+/* 4 Custom Theme Background Presets */
 .theme-emerald {
     background-image: url('assets/bg.png');
     image-rendering: pixelated;
@@ -58,15 +58,17 @@ body {
 
 .theme-candy {
     background-image: url('assets/candy-bg.png');
-    opacity: 0.6;
+    opacity: 0.65;
 }
 
 .theme-space {
-    background: radial-gradient(circle at center, #112240 0%, #0a192f 100%);
+    background-image: url('assets/space-bg.png');
+    opacity: 0.6;
 }
 
 .theme-ocean {
-    background: linear-gradient(180deg, #0077b6 0%, #03045e 100%);
+    background-image: url('assets/ocean-bg.png');
+    opacity: 0.65;
 }
 
 #starfield {
@@ -104,6 +106,23 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.home-btn {
+    background: rgba(100, 255, 218, 0.15);
+    border: 1px solid var(--accent-teal);
+    color: var(--accent-teal);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.home-btn:hover {
+    background: var(--accent-teal);
+    color: #070f1e;
 }
 
 .theme-select {
@@ -191,7 +210,7 @@ body {
     color: var(--text-muted);
 }
 
-/* Retro Arcade Progress Bar */
+/* Progress Bar */
 .progress-bar-wrap {
     flex: 1;
     max-width: 180px;
@@ -221,7 +240,7 @@ body {
     letter-spacing: 2px;
 }
 
-/* Compact Status Tags */
+/* Mini Tags */
 .status-tags-group {
     display: flex;
     align-items: center;
@@ -285,7 +304,6 @@ body {
     100% { transform: translate(0, 0); }
 }
 
-/* Danger Drop Indicator */
 .hazard-warning {
     position: absolute;
     top: 8px;
@@ -320,7 +338,7 @@ body {
     touch-action: none;
 }
 
-/* Overlay Screen Modals */
+/* Home Screen & Modals */
 .overlay-screen {
     position: absolute;
     top: 0;
@@ -357,6 +375,74 @@ body {
     align-items: center;
 }
 
+.home-card {
+    max-width: 540px;
+    gap: 12px;
+}
+
+/* 4 Realm Cards Grid */
+.realm-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin: 4px 0;
+}
+
+.realm-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.realm-card:hover {
+    background: rgba(100, 255, 218, 0.12);
+    border-color: var(--accent-teal);
+    transform: translateY(-2px);
+}
+
+.realm-card.active {
+    background: rgba(100, 255, 218, 0.18);
+    border: 1px solid var(--accent-teal);
+    box-shadow: 0 0 12px rgba(100, 255, 218, 0.3);
+}
+
+.realm-icon {
+    font-size: 1.6rem;
+}
+
+.realm-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.realm-info strong {
+    font-size: 0.85rem;
+    color: #ffffff;
+}
+
+.realm-info span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.home-stat-bar {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 14px;
+    border-radius: 10px;
+    width: 100%;
+}
+
 .badge, .result-badge {
     font-size: 0.68rem;
     font-weight: 800;
@@ -370,7 +456,7 @@ body {
 
 .overlay-card h2 {
     font-family: var(--font-heading);
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     color: #ffffff;
 }
 
@@ -419,12 +505,18 @@ body {
     border-radius: 8px;
 }
 
-/* Action Buttons */
+/* Button Groups */
+.btn-group-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
 .btn {
     font-family: var(--font-heading);
     font-size: 0.9rem;
     font-weight: 800;
-    padding: 10px 24px;
+    padding: 10px 20px;
     border-radius: 30px;
     border: none;
     cursor: pointer;
@@ -437,6 +529,16 @@ body {
     background: linear-gradient(135deg, var(--accent-teal) 0%, #00b4d8 100%);
     color: #070f1e;
     box-shadow: 0 4px 18px rgba(100, 255, 218, 0.45);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-glass);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .btn-start:hover, .btn-restart:hover {
@@ -496,5 +598,8 @@ body {
     }
     .game-title {
         font-size: 0.95rem;
+    }
+    .realm-cards-grid {
+        grid-template-columns: 1fr;
     }
 }

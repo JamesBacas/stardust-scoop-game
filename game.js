@@ -2,44 +2,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Predefined Skill Themes ---
     const THEMES = {
-        emerald: {
-            title: "🏰 EMERALD KINGDOM",
-            target_score: 50,
-            session_seconds: 60,
-            starting_lives: 3,
-            items: {
-                good: [
-                    { id: "moonstone", name: "Moonstone", points: 1, emoji: "🌙", rarity: "common", color: "#b7e4c7", size: 28 },
-                    { id: "emerald", name: "Emerald Gem", points: 3, emoji: "💎", rarity: "common", color: "#52b788", size: 30 },
-                    { id: "scroll", name: "Ancient Scroll", points: 5, emoji: "📜", rarity: "uncommon", color: "#d8f3dc", size: 32 },
-                    { id: "blade", name: "Mythic Blade", points: 5, emoji: "🗡️", rarity: "uncommon", color: "#74c69d", size: 32 },
-                    { id: "crown", name: "Royal Crown", points: 15, emoji: "👑", rarity: "rare", color: "#ffd166", size: 36 }
-                ],
-                bad: [
-                    { id: "web", name: "Spur Debris", points: -1, emoji: "🕸️", rarity: "common", color: "#406a56", size: 28 },
-                    { id: "poison", name: "Poison Flask", points: -3, emoji: "☠️", rarity: "common", color: "#2d6a4f", size: 32 },
-                    { id: "curse", name: "Dark Curse", points: -5, emoji: "⚡", rarity: "uncommon", color: "#95d5b2", size: 34 },
-                    { id: "orb", name: "Cursed Orb", points: -10, emoji: "👁️", rarity: "rare", color: "#081c15", size: 38, deduct_life: true }
-                ],
-                powerups: [
-                    { id: "magnet", name: "Emerald Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#52b788", size: 34 },
-                    { id: "chrono", name: "Time Hourglass", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#b7e4c7", size: 34 },
-                    { id: "shield", name: "Rune Barrier", type: "shield", emoji: "🛡️", rarity: "rare", color: "#d8f3dc", size: 34 }
-                ]
-            },
-            difficulty_curve: [
-                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
-            ],
-            messages: {
-                win: "Kingdom Restored! You collected {score} points of emerald power for the realm. 🏰",
-                lose: "The castle fell into darkness... You collected {score} points. Try again!",
-                restart_button: "Defend Realm"
-            }
-        },
-
         candy: {
             title: "🍬 CANDY CRUSH",
             target_score: 50,
@@ -75,6 +37,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 win: "Sugar Rush Victory! You collected {score} points of juicy candies. 🍬",
                 lose: "Tummy ache overload... You collected {score} points. Try again!",
                 restart_button: "Play Again"
+            }
+        },
+
+        emerald: {
+            title: "🏰 EMERALD KINGDOM",
+            target_score: 50,
+            session_seconds: 60,
+            starting_lives: 3,
+            items: {
+                good: [
+                    { id: "moonstone", name: "Moonstone", points: 1, emoji: "🌙", rarity: "common", color: "#b7e4c7", size: 28 },
+                    { id: "emerald", name: "Emerald Gem", points: 3, emoji: "💎", rarity: "common", color: "#52b788", size: 30 },
+                    { id: "scroll", name: "Ancient Scroll", points: 5, emoji: "📜", rarity: "uncommon", color: "#d8f3dc", size: 32 },
+                    { id: "blade", name: "Mythic Blade", points: 5, emoji: "🗡️", rarity: "uncommon", color: "#74c69d", size: 32 },
+                    { id: "crown", name: "Royal Crown", points: 15, emoji: "👑", rarity: "rare", color: "#ffd166", size: 36 }
+                ],
+                bad: [
+                    { id: "web", name: "Spur Debris", points: -1, emoji: "🕸️", rarity: "common", color: "#406a56", size: 28 },
+                    { id: "poison", name: "Poison Flask", points: -3, emoji: "☠️", rarity: "common", color: "#2d6a4f", size: 32 },
+                    { id: "curse", name: "Dark Curse", points: -5, emoji: "⚡", rarity: "uncommon", color: "#95d5b2", size: 34 },
+                    { id: "orb", name: "Cursed Orb", points: -10, emoji: "👁️", rarity: "rare", color: "#081c15", size: 38, deduct_life: true }
+                ],
+                powerups: [
+                    { id: "magnet", name: "Emerald Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#52b788", size: 34 },
+                    { id: "chrono", name: "Time Hourglass", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#b7e4c7", size: 34 },
+                    { id: "shield", name: "Rune Barrier", type: "shield", emoji: "🛡️", rarity: "rare", color: "#d8f3dc", size: 34 }
+                ]
+            },
+            difficulty_curve: [
+                { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
+                { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
+                { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
+                { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
+            ],
+            messages: {
+                win: "Kingdom Restored! You collected {score} points of emerald power for the realm. 🏰",
+                lose: "The castle fell into darkness... You collected {score} points. Try again!",
+                restart_button: "Defend Realm"
             }
         },
 
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    let activeThemeKey = 'candy'; // Default to Candy Crush theme
+    let activeThemeKey = 'candy';
     let currentConfig = THEMES[activeThemeKey];
 
     // --- Web Audio Synthesizer ---
@@ -247,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
+    const headerHomeBtn = document.getElementById('headerHomeBtn');
     const themeSelect = document.getElementById('themeSelect');
     const gameTitleDisplay = document.getElementById('gameTitleDisplay');
     const soundToggle = document.getElementById('soundToggle');
@@ -267,10 +268,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const chronoTag = document.getElementById('chronoTag');
     const shieldTag = document.getElementById('shieldTag');
 
+    const homeOverlay = document.getElementById('homeOverlay');
+    const homeBestScore = document.getElementById('homeBestScore');
+    const homeStartBtn = document.getElementById('homeStartBtn');
+    const realmCards = document.querySelectorAll('.realm-card');
+
     const startOverlay = document.getElementById('startOverlay');
+    const startBackHomeBtn = document.getElementById('startBackHomeBtn');
     const infoOverlay = document.getElementById('infoOverlay');
     const closeInfoBtn = document.getElementById('closeInfoBtn');
     const endOverlay = document.getElementById('endOverlay');
+    const endHomeBtn = document.getElementById('endHomeBtn');
     const startBtn = document.getElementById('startBtn');
     const restartBtn = document.getElementById('restartBtn');
 
@@ -284,23 +292,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxComboDisplay = document.getElementById('maxCombo');
     const bestScoreDisplay = document.getElementById('bestScore');
 
+    let bestScore = parseInt(localStorage.getItem('stardust_best_score') || '0', 10);
+    homeBestScore.textContent = bestScore;
+
+    // --- Navigation & Menu Handlers ---
+    function openHomeHub() {
+        gameState = 'START';
+        audio.init();
+        homeBestScore.textContent = bestScore;
+        homeOverlay.classList.remove('hidden');
+        startOverlay.classList.add('hidden');
+        endOverlay.classList.add('hidden');
+        infoOverlay.classList.add('hidden');
+    }
+
+    headerHomeBtn.addEventListener('click', openHomeHub);
+    startBackHomeBtn.addEventListener('click', openHomeHub);
+    endHomeBtn.addEventListener('click', openHomeHub);
+
+    // Realm Cards Click Selection
+    realmCards.forEach(card => {
+        card.addEventListener('click', () => {
+            realmCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            activeThemeKey = card.dataset.theme;
+            themeSelect.value = activeThemeKey;
+            currentConfig = THEMES[activeThemeKey];
+            updateThemeUI();
+        });
+    });
+
+    homeStartBtn.addEventListener('click', () => {
+        homeOverlay.classList.add('hidden');
+        startOverlay.classList.remove('hidden');
+    });
+
     soundToggle.addEventListener('click', () => {
         const isMuted = audio.toggleMute();
         soundIcon.textContent = isMuted ? '🔇' : '🔊';
     });
 
-    infoBtn.addEventListener('click', () => {
-        infoOverlay.classList.remove('hidden');
-    });
-
-    closeInfoBtn.addEventListener('click', () => {
-        infoOverlay.classList.add('hidden');
-    });
+    infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
+    closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
 
     themeSelect.value = activeThemeKey;
     themeSelect.addEventListener('change', (e) => {
         activeThemeKey = e.target.value;
         currentConfig = THEMES[activeThemeKey];
+
+        realmCards.forEach(card => {
+            card.classList.toggle('active', card.dataset.theme === activeThemeKey);
+        });
+
         updateThemeUI();
         if (gameState === 'PLAYING') resetGame();
     });
@@ -325,14 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Game State Vars ---
-    let gameState = 'START';
     let score = 0;
     let lives = 3;
     let timer = 60;
     let comboStreak = 0;
     let maxComboStreak = 0;
     let isFeverMode = false;
-    let bestScore = parseInt(localStorage.getItem('stardust_best_score') || '0', 10);
 
     let powerupState = {
         magnetTimer: 0,
@@ -468,7 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreValue.textContent = score;
         timerValue.textContent = `${Math.ceil(timer)}s`;
         
-        // Update Score Fill Bar
         const fillPct = Math.min(100, Math.max(0, (score / currentConfig.target_score) * 100));
         progressFill.style.width = `${fillPct}%`;
 
@@ -516,6 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gameState = 'PLAYING';
         updateHUD();
+        homeOverlay.classList.add('hidden');
         endOverlay.classList.add('hidden');
         startOverlay.classList.add('hidden');
 
@@ -587,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paddle.scaleY += (1.0 - paddle.scaleY) * 0.15;
 
-        // Thruster Particle Generation matching current theme
+        // Thruster Particle Generation
         if (Math.random() < 0.8) {
             thrusterParticles.push({
                 x: paddle.x + (Math.random() * 20 - 10),
@@ -742,7 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Cyber Grid Lines
         if (powerupState.chronoTimer > 0) {
             ctx.strokeStyle = 'rgba(0, 245, 212, 0.14)';
             ctx.lineWidth = 2;
@@ -758,7 +798,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
 
-        // Draw Thruster Particles
         for (let tp of thrusterParticles) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, tp.alpha);
@@ -771,7 +810,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         }
 
-        // Draw Vessel Paddle matching active theme
         const px = paddle.x;
         const py = paddle.y;
         const pw = paddle.width;
@@ -822,7 +860,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.restore();
 
-        // Draw Items with 3D Depth Scaling
         ctx.font = '28px serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -839,7 +876,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         }
 
-        // Draw Explosion Particles
         for (let p of particles) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, p.alpha);
@@ -850,7 +886,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         }
 
-        // Draw Floating Text Popups
         for (let ft of floatingTexts) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, ft.alpha);
