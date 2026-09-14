@@ -1,6 +1,6 @@
 {
   "title": "Stardust Scoop",
-  "objective": "Steer your ship to catch stardust and comets while dodging asteroids — reach 50 points before time runs out!",
+  "life_icon": "⚡",
   "target_score": 50,
   "session_seconds": 60,
   "starting_lives": 3,
@@ -14,16 +14,23 @@
     ],
     "bad": [
       { "id": "junk", "name": "Space Junk", "points": -1, "emoji": "🗑️", "rarity": "common", "color": "#8d99ae" },
-      { "id": "asteroid", "name": "Asteroid", "points": -3, "emoji": "🪨", "rarity": "common", "color": "#6c757d" },
+      { "id": "asteroid", "name": "Asteroid", "points": -3, "emoji": "🪨", "rarity": "common", "color": "#a0aab2" },
       { "id": "meteor", "name": "Meteor", "points": -5, "emoji": "🔥", "rarity": "uncommon", "color": "#ef476f" },
-      { "id": "blackhole", "name": "Black Hole", "points": -10, "emoji": "🕳️", "rarity": "rare", "color": "#111122", "deduct_life": true }
+      { "id": "blackhole", "name": "Black Hole", "points": -10, "emoji": "🕳️", "rarity": "rare", "color": "#bd5fff", "deduct_life": true }
+    ],
+    "powerups": [
+      { "id": "magnet", "name": "Magnet", "type": "magnet", "emoji": "🧲", "rarity": "uncommon", "color": "#ff0054", "size": 34 },
+      { "id": "chrono", "name": "Chrono Warp", "type": "chrono", "emoji": "⏳", "rarity": "uncommon", "color": "#00f5d4", "size": 34 },
+      { "id": "shield", "name": "Energy Shield", "type": "shield", "emoji": "🛡️", "rarity": "rare", "color": "#70d6ff", "size": 34 },
+      { "id": "heal", "name": "Energy Cell", "type": "heal", "emoji": "🔋", "rarity": "rare", "color": "#00f5d4", "size": 34 },
+      { "id": "mystery", "name": "Mystery Crate", "type": "mystery", "emoji": "❓", "rarity": "rare", "color": "#ffd166", "size": 36 }
     ]
   },
   "difficulty_curve": [
     { "time_seconds": 0, "fall_speed_multiplier": 1.0, "spawn_rate_multiplier": 1.0, "note": "Baseline pace, mostly common items" },
-    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.2, "note": "Slightly faster, uncommon items start appearing" },
-    { "time_seconds": 30, "fall_speed_multiplier": 1.5, "spawn_rate_multiplier": 1.4, "note": "Rare items can now spawn, more bad items in the mix" },
-    { "time_seconds": 45, "fall_speed_multiplier": 1.8, "spawn_rate_multiplier": 1.7, "note": "Final sprint — dense field, fast falls" }
+    { "time_seconds": 15, "fall_speed_multiplier": 1.25, "spawn_rate_multiplier": 1.25, "note": "Slightly faster, uncommon items start appearing" },
+    { "time_seconds": 30, "fall_speed_multiplier": 1.55, "spawn_rate_multiplier": 1.5, "note": "Rare items can now spawn, speed surge active" },
+    { "time_seconds": 45, "fall_speed_multiplier": 1.9, "spawn_rate_multiplier": 1.85, "note": "Final sprint — dense field, fast falls" }
   ],
   "messages": {
     "win": "Mission complete! You scooped {score} points of cosmic energy across the galaxy. 🚀",

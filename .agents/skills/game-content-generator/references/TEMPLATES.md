@@ -35,4 +35,5 @@ This reference guide provides ready-to-use schemas, quest definitions, and theme
 - **Magnet (`🧲`)**: Pulls falling good items toward player paddle for 6 seconds.
 - **Chrono (`⏳`)**: Slows item fall speed by 50% for 6 seconds.
 - **Shield (`🛡️`)**: Absorbs 1 hazard hit without penalty.
+- **Extra Life (`🔋`)**: Restores +1 Life (or +10 PTS if full).
 - **Mystery Box (`❓`)**: 50% chance of +20 jackpot, 50% chance of hazard explosion.
