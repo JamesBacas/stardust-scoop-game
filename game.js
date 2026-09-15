@@ -810,13 +810,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.lineWidth = 1.5;
                 ctx.strokeRect(x, y, cellSize, cellSize);
 
-                // Highlight Selected Cell with Bright Border (Fast rendering)
+                // Highlight Selected Cell with Bright Neon Border & Soft Glow
                 if (selectedCell && selectedCell.r === r && selectedCell.c === c) {
                     ctx.fillStyle = 'rgba(100, 255, 218, 0.45)';
                     ctx.fillRect(x, y, cellSize, cellSize);
                     ctx.strokeStyle = '#ffffff';
+                    ctx.shadowColor = '#64ffda';
+                    ctx.shadowBlur = 12;
                     ctx.lineWidth = 3.5;
                     ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+                    ctx.shadowBlur = 0;
                 }
 
                 // Render Tile Emoji & Vibrant Tile Backing Pill
@@ -827,10 +830,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const tileW = cellSize - pad * 2;
                     const tileH = cellSize - pad * 2;
 
-                    // Fast crisp borders (no expensive per-frame shadowBlur)
-                    ctx.fillStyle = tile.id === 'blackhole' ? 'rgba(40, 10, 20, 0.9)' : 'rgba(18, 26, 52, 0.85)';
+                    // Sci-Fi Backing Pill with Soft Neon Glow
+                    ctx.fillStyle = tile.id === 'blackhole' ? 'rgba(40, 10, 20, 0.9)' : 'rgba(18, 26, 52, 0.88)';
                     ctx.strokeStyle = tile.color;
-                    ctx.lineWidth = tile.id === 'blackhole' ? 3.5 : 2.5;
+                    ctx.lineWidth = tile.id === 'blackhole' ? 3.0 : 2.0;
+                    ctx.shadowColor = tile.color;
+                    ctx.shadowBlur = tile.id === 'blackhole' ? 14 : 8;
 
                     ctx.beginPath();
                     ctx.roundRect(x + pad, y + pad, tileW, tileH, 12);
@@ -838,6 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.stroke();
 
                     // Render Symbol Inside Pill
+                    ctx.shadowBlur = 0;
                     ctx.translate(x + cellSize / 2, y + cellSize / 2);
                     ctx.font = `${Math.floor(cellSize * 0.54)}px "Segoe UI Emoji", "Apple Color Emoji", Orbitron, sans-serif`;
                     ctx.textAlign = 'center';
@@ -848,6 +854,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (tile.id === 'blackhole' && tile.turns > 0) {
                         ctx.font = '800 13px Orbitron, sans-serif';
                         ctx.fillStyle = '#ff0054';
+                        ctx.shadowColor = '#ff0054';
+                        ctx.shadowBlur = 6;
                         ctx.fillText(`⏳${3 - tile.turns}`, cellSize * 0.28, -cellSize * 0.28);
                     }
 

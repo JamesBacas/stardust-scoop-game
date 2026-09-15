@@ -17,8 +17,8 @@
         <!-- Compact Control Header -->
         <header class="game-header">
             <div class="header-left">
-                <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄 Reset</button>
-                <button class="icon-btn" id="infoBtn" title="How to Play & Objective">ℹ️ Guide</button>
+                <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄</button>
+                <button class="icon-btn" id="infoBtn" title="How to Play & Objective">ℹ️</button>
             </div>
 
             <h1 class="game-title">⚡ STARDUST REACTOR</h1>
@@ -61,7 +61,7 @@
 
         <!-- Objective Banner -->
         <div class="objective-banner">
-            🎯 <strong>Goal:</strong> Tap adjacent tiles to swap! Contain <span id="targetHolesText">3</span> Black Holes 🕳️ & reach <span id="targetScoreText">1200</span> Energy!
+            🎯 <strong>Goal:</strong> Contain <span id="targetHolesText">3</span> Black Holes 🕳️ & Reach <span id="targetScoreText">1200</span> Energy!
         </div>
 
         <!-- Main Logic Canvas Container -->
@@ -70,20 +70,18 @@
 
             <!-- Objective Info / Instructions Modal -->
             <div class="overlay-screen" id="infoOverlay">
-                <div class="overlay-card">
+                <div class="overlay-card compact-card">
                     <div class="badge">HOW TO PLAY</div>
-                    <h2 style="color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 8px;">⚡ Stardust Reactor Guide</h2>
+                    <h2 class="modal-title">⚡ How to Play</h2>
                     
                     <div class="rules-box">
-                        <p>👉 <strong>Tap & Swap:</strong> Tap a tile to select it, then tap an adjacent tile to swap (or swipe across tiles).</p>
-                        <p>🔹 <strong>Match 3 Tiles:</strong> Align 3 matching elements (✨ 💎 🌟) to score Energy.</p>
-                        <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Creates a Pulsar tile ⚡ that vaporizes its entire row & column when matched.</p>
-                        <p>🌌 <strong>Match 5 (Quantum Core):</strong> Creates a Core tile 🌌 that clears all tiles of that target element.</p>
-                        <p>🕳️ <strong>Contain Black Holes:</strong> Match tiles adjacent to 🕳️ or blast with a Line Pulsar ⚡ to destroy it.</p>
-                        <p>⭐ <strong>Star Targets:</strong> 1 Star (&lt; 1,200 Energy), 2 Stars (1,200 Goal), 3 Stars (1,500+ Energy).</p>
+                        <p>👉 <strong>Tap & Swap:</strong> Tap adjacent tiles to swap.</p>
+                        <p>🔹 <strong>Match 3+:</strong> Score Energy (✨ 💎 🌟).</p>
+                        <p>⚡ <strong>Match 4/5:</strong> Line Pulsar & Core combos!</p>
+                        <p>🕳️ <strong>Contain 3 Black Holes</strong> & reach 1,200 Energy!</p>
                     </div>
 
-                    <button class="btn btn-primary" id="closeInfoBtn">Got It!</button>
+                    <button class="btn btn-primary" id="closeInfoBtn">🚀 Start Game</button>
                 </div>
             </div>
 
@@ -124,32 +122,9 @@
             </div>
         </div>
 
-        <!-- Scrollable Clear Guide Card for Mobile -->
-        <div class="inline-guide-card">
-            <h3>📖 Quick Rules & Controls</h3>
-            <div class="guide-grid">
-                <div class="guide-step">
-                    <span class="step-num">1</span>
-                    <div><strong>Tap & Swap:</strong> Tap tile A, then tap adjacent tile B to swap!</div>
-                </div>
-                <div class="guide-step">
-                    <span class="step-num">2</span>
-                    <div><strong>Score Energy:</strong> Match 3+ identical tiles (✨ Stardust, 💎 Crystal, 🌟 Nova).</div>
-                </div>
-                <div class="guide-step">
-                    <span class="step-num">3</span>
-                    <div><strong>Contain Black Holes:</strong> Match tiles next to 🕳️ or hit with Line Pulsar ⚡ lasers!</div>
-                </div>
-                <div class="guide-step">
-                    <span class="step-num">4</span>
-                    <div><strong>Star Goals:</strong><br>⭐ 1 Star (&lt; 1,200 Energy)<br>⭐⭐ 2 Stars (1,200 Target Energy)<br>⭐⭐⭐ 3 Stars (&gt; 1,500 Energy!)</div>
-                </div>
-            </div>
-        </div>
-
         <!-- Controls Hint Banner -->
         <div class="controls-hint">
-            <span>📱 <strong>Mobile & Desktop:</strong> Tap tile & tap adjacent tile to swap (or drag/swipe)</span>
+            <span>📱 <strong>Controls:</strong> Tap tile & tap adjacent tile to swap (or drag/swipe)</span>
         </div>
     </div>
 

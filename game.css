@@ -27,6 +27,7 @@
 
 html, body {
     width: 100%;
+    height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
     overflow-x: hidden;
@@ -37,7 +38,7 @@ html, body {
     font-family: var(--font-inter);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     position: relative;
 }
 
@@ -52,20 +53,19 @@ html, body {
     z-index: 0;
 }
 
+/* Balanced Wrapper (Desktop & Mobile Friendly) */
 .game-wrapper {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 560px;
-    min-height: 100vh;
-    min-height: 100dvh;
-    height: auto;
-    padding: 12px 10px 24px;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 /* Header */
@@ -77,7 +77,7 @@ html, body {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 10px 16px;
+    padding: 8px 12px;
     backdrop-filter: blur(12px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
@@ -90,7 +90,7 @@ html, body {
 
 .game-title {
     font-family: var(--font-orbitron);
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 1px;
@@ -98,6 +98,7 @@ html, body {
     text-align: center;
 }
 
+/* Touch-Friendly Icon-Only Buttons */
 .icon-btn, .sound-toggle {
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(100, 255, 218, 0.5);
@@ -105,15 +106,16 @@ html, body {
     font-size: 1.1rem;
     width: 38px;
     height: 38px;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease;
+    touch-action: manipulation;
 }
 
-.icon-btn:hover, .sound-toggle:hover {
+.icon-btn:hover, .sound-toggle:hover, .icon-btn:active, .sound-toggle:active {
     background: rgba(100, 255, 218, 0.3);
     border-color: var(--accent-teal);
     transform: scale(1.08);
@@ -124,14 +126,12 @@ html, body {
 .compact-hud {
     width: 100%;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
-    gap: 8px 12px;
     background: rgba(15, 22, 45, 0.88);
     border: 1.5px solid var(--accent-teal);
     border-radius: 12px;
-    padding: 10px 14px;
+    padding: 8px 12px;
     backdrop-filter: blur(12px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(100, 255, 218, 0.1);
 }
@@ -143,7 +143,7 @@ html, body {
 }
 
 .hud-lbl {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-family: var(--font-orbitron);
     color: #cbd5e1;
     letter-spacing: 1px;
@@ -151,7 +151,7 @@ html, body {
 }
 
 .hud-val {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     font-family: var(--font-orbitron);
     font-weight: 900;
     color: var(--accent-gold);
@@ -159,7 +159,7 @@ html, body {
 }
 
 .hud-target {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: #94a3b8;
     font-weight: 600;
 }
@@ -171,8 +171,8 @@ html, body {
 
 .mini-tag {
     font-family: var(--font-orbitron);
-    font-size: 0.75rem;
-    padding: 4px 10px;
+    font-size: 0.7rem;
+    padding: 3px 8px;
     border-radius: 6px;
     font-weight: 900;
     background: rgba(255, 209, 102, 0.3);
@@ -185,14 +185,14 @@ html, body {
     display: none !important;
 }
 
-/* Bright Objective Banner */
+/* Objective Banner */
 .objective-banner {
     width: 100%;
-    background: rgba(100, 255, 218, 0.22);
+    background: rgba(100, 255, 218, 0.18);
     border: 1.5px dashed var(--accent-teal);
     border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 0.88rem;
+    padding: 6px 10px;
+    font-size: 0.8rem;
     text-align: center;
     color: #ffffff;
     font-weight: 700;
@@ -204,7 +204,7 @@ html, body {
 .canvas-container {
     position: relative;
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     aspect-ratio: 1 / 1;
     background: rgba(12, 17, 34, 0.85);
     border: 2px solid var(--accent-teal);
@@ -236,21 +236,21 @@ html, body {
     80% { transform: translate(4px, -2px); }
 }
 
-/* Modal Overlays */
+/* Compact, Mobile-Friendly Modal Overlays */
 .overlay-screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(6, 8, 16, 0.92);
-    backdrop-filter: blur(12px);
+    background: rgba(6, 8, 16, 0.90);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 12px;
     z-index: 50;
-    animation: fadeIn 0.25s ease-out;
+    animation: fadeIn 0.2s ease-out;
 }
 
 @keyframes fadeIn {
@@ -261,88 +261,102 @@ html, body {
 .overlay-card {
     background: rgba(18, 25, 48, 0.96);
     border: 2px solid var(--accent-teal);
-    border-radius: 16px;
-    padding: 24px;
-    width: 100%;
-    max-width: 420px;
+    border-radius: 14px;
+    padding: 14px 16px;
+    width: 90%;
+    max-width: 320px;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     text-align: center;
-    box-shadow: 0 0 30px rgba(100, 255, 218, 0.4), 0 16px 50px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 25px rgba(100, 255, 218, 0.4), 0 16px 50px rgba(0, 0, 0, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
 }
 
 .badge {
     font-family: var(--font-orbitron);
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-weight: 800;
     color: var(--accent-teal);
     background: rgba(100, 255, 218, 0.18);
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: 2px 8px;
+    border-radius: 16px;
     letter-spacing: 1px;
+}
+
+.modal-title {
+    font-family: var(--font-orbitron);
+    font-size: 1.0rem;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
 }
 
 .rules-box {
     text-align: left;
-    font-size: 0.85rem;
-    line-height: 1.5;
+    font-size: 0.78rem;
+    line-height: 1.4;
     color: #e2e8f0;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 14px;
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 10px 12px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
 }
 
 .rules-box strong {
     color: #ffffff;
 }
 
+/* Touch-Friendly Buttons */
 .btn {
     font-family: var(--font-orbitron);
     font-weight: 800;
-    font-size: 0.95rem;
-    padding: 14px 24px;
+    font-size: 0.88rem;
+    padding: 10px 18px;
+    min-height: 40px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
+    touch-action: manipulation;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, var(--accent-teal), #00b4d8);
     color: #05070e;
-    box-shadow: 0 4px 20px rgba(100, 255, 218, 0.5);
+    box-shadow: 0 4px 16px rgba(100, 255, 218, 0.5);
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .btn-primary:active {
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(100, 255, 218, 0.8);
+    box-shadow: 0 6px 22px rgba(100, 255, 218, 0.8);
 }
 
 .btn-restart {
     background: linear-gradient(135deg, var(--accent-gold), #ff9770);
     color: #05070e;
-    box-shadow: 0 4px 20px rgba(255, 209, 102, 0.5);
+    box-shadow: 0 4px 16px rgba(255, 209, 102, 0.5);
 }
 
-.btn-restart:hover {
+.btn-restart:hover, .btn-restart:active {
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(255, 209, 102, 0.8);
+    box-shadow: 0 6px 22px rgba(255, 209, 102, 0.8);
 }
 
 /* Star Rating */
 .star-rating-display {
     display: flex;
-    gap: 12px;
-    font-size: 2.4rem;
+    gap: 8px;
+    font-size: 2.0rem;
     color: rgba(255, 255, 255, 0.2);
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .star-icon.active {
@@ -356,8 +370,8 @@ html, body {
     justify-content: space-around;
     width: 100%;
     background: rgba(0, 0, 0, 0.4);
-    padding: 14px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -368,107 +382,67 @@ html, body {
 }
 
 .stat-lbl {
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     color: #94a3b8;
     font-weight: 700;
 }
 
 .stat-val {
     font-family: var(--font-orbitron);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 900;
     color: var(--accent-teal);
     text-shadow: 0 0 10px var(--accent-teal);
 }
 
-/* Scrollable Inline Guide Card */
-.inline-guide-card {
-    width: 100%;
-    background: rgba(15, 22, 45, 0.85);
-    border: 1px solid rgba(100, 255, 218, 0.3);
-    border-radius: 12px;
-    padding: 12px 14px;
-    margin-top: 4px;
-}
-
-.inline-guide-card h3 {
-    font-family: var(--font-orbitron);
-    font-size: 0.85rem;
-    color: var(--accent-gold);
-    margin-bottom: 10px;
-}
-
-.guide-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.guide-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.8rem;
-    color: #e2e8f0;
-    line-height: 1.4;
-}
-
-.step-num {
-    background: var(--accent-teal);
-    color: #070913;
-    font-family: var(--font-orbitron);
-    font-weight: 800;
-    font-size: 0.75rem;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
 /* Controls Hint Banner */
 .controls-hint {
-    font-size: 0.78rem;
-    color: #e2e8f0;
+    font-size: 0.72rem;
+    color: #cbd5e1;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     font-weight: 600;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* Mobile Responsive Adjustments */
-@media (max-width: 600px) {
+/* Mobile & Small Screen Responsive Adjustments */
+@media (max-height: 700px) {
+    html, body {
+        align-items: flex-start;
+    }
     .game-wrapper {
-        padding: 6px;
-        gap: 6px;
+        padding: 6px 10px;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 540px) {
+    .game-wrapper {
+        padding: 6px 8px;
+        gap: 5px;
     }
 
     .game-header {
-        padding: 6px 12px;
+        padding: 6px 10px;
     }
 
     .game-title {
-        font-size: 1.0rem;
+        font-size: 0.9rem;
     }
 
     .compact-hud {
-        padding: 6px 12px;
+        padding: 6px 8px;
     }
 
     .hud-val {
-        font-size: 1.15rem;
+        font-size: 1.05rem;
     }
 
     .objective-banner {
-        font-size: 0.76rem;
-        padding: 5px 8px;
+        font-size: 0.72rem;
+        padding: 4px 6px;
     }
 
     .controls-hint {
-        font-size: 0.72rem;
+        font-size: 0.68rem;
     }
 }
