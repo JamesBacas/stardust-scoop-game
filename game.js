@@ -810,16 +810,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.lineWidth = 1.5;
                 ctx.strokeRect(x, y, cellSize, cellSize);
 
-                // Highlight Selected Cell with Bright Neon Border & Soft Glow
-                if (selectedCell && selectedCell.r === r && selectedCell.c === c) {
-                    ctx.fillStyle = 'rgba(100, 255, 218, 0.45)';
-                    ctx.fillRect(x, y, cellSize, cellSize);
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.shadowColor = '#64ffda';
-                    ctx.shadowBlur = 12;
-                    ctx.lineWidth = 3.5;
-                    ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
-                    ctx.shadowBlur = 0;
+                // Highlight Selected Cell & Adjacent Swap Candidates
+                if (selectedCell) {
+                    if (selectedCell.r === r && selectedCell.c === c) {
+                        ctx.fillStyle = 'rgba(100, 255, 218, 0.45)';
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.shadowColor = '#64ffda';
+                        ctx.shadowBlur = 12;
+                        ctx.lineWidth = 3.5;
+                        ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+                        ctx.shadowBlur = 0;
+                    } else {
+                        // Visually highlight valid adjacent swap target tiles!
+                        const isAdj = (Math.abs(selectedCell.r - r) + Math.abs(selectedCell.c - c)) === 1;
+                        if (isAdj) {
+                            ctx.fillStyle = 'rgba(255, 209, 102, 0.20)';
+                            ctx.fillRect(x, y, cellSize, cellSize);
+                            ctx.strokeStyle = 'rgba(255, 209, 102, 0.9)';
+                            ctx.lineWidth = 2.5;
+                            ctx.setLineDash([5, 4]);
+                            ctx.strokeRect(x + 3, y + 3, cellSize - 6, cellSize - 6);
+                            ctx.setLineDash([]);
+                        }
+                    }
                 }
 
                 // Render Tile Emoji & Vibrant Tile Backing Pill
@@ -948,6 +962,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
     closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
+
+    // Modal Mobile Navigation Tabs
+    const tabControlsBtn = document.getElementById('tabControlsBtn');
+    const tabCombosBtn = document.getElementById('tabCombosBtn');
+    const tabControls = document.getElementById('tabControls');
+    const tabCombos = document.getElementById('tabCombos');
+
+    if (tabControlsBtn && tabCombosBtn) {
+        tabControlsBtn.addEventListener('click', () => {
+            tabControlsBtn.classList.add('active');
+            tabCombosBtn.classList.remove('active');
+            if (tabControls) tabControls.classList.remove('hidden');
+            if (tabCombos) tabCombos.classList.add('hidden');
+        });
+
+        tabCombosBtn.addEventListener('click', () => {
+            tabCombosBtn.classList.add('active');
+            tabControlsBtn.classList.remove('active');
+            if (tabCombos) tabCombos.classList.remove('hidden');
+            if (tabControls) tabControls.classList.add('hidden');
+        });
+    }
 
     // Initialize Game
     initBoard();
