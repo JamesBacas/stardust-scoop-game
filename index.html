@@ -14,7 +14,7 @@
     <div id="starfield"></div>
 
     <div class="game-wrapper">
-        <!-- Compact Control Header -->
+        <!-- Control Header -->
         <header class="game-header">
             <div class="header-left">
                 <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄</button>
@@ -30,7 +30,7 @@
             </div>
         </header>
 
-        <!-- Compact Integrated Game HUD Bar -->
+        <!-- Taller, Spacious HUD Bar -->
         <div class="compact-hud">
             <div class="hud-item moves-item">
                 <span class="hud-lbl">MOVES</span>
@@ -53,7 +53,7 @@
                 <span class="hud-val" id="hazardValue">0/3 🕳️</span>
             </div>
 
-            <!-- Cascade Combo Badge -->
+            <!-- Cascade Combo Badge Container -->
             <div class="status-tags-group">
                 <span class="mini-tag combo-tag hidden" id="comboBadge">⚡ COMBO x1</span>
             </div>
@@ -68,32 +68,45 @@
         <div class="canvas-container" id="canvasContainer">
             <canvas id="gameCanvas" width="540" height="540"></canvas>
 
-            <!-- Objective Info / Instructions Modal with Mobile Tabs -->
+            <!-- Detailed Scrollable Instructions Modal -->
             <div class="overlay-screen" id="infoOverlay">
-                <div class="overlay-card compact-card">
-                    <div class="badge">GUIDE</div>
+                <div class="overlay-card scrollable-guide-card">
+                    <div class="badge">GAME GUIDE & COMBO MANUAL</div>
+                    <h2 class="modal-title">⚡ Stardust Reactor</h2>
                     
-                    <!-- Easy Mobile Navigation Tabs -->
-                    <div class="modal-tabs">
-                        <button class="tab-btn active" id="tabControlsBtn">🎮 How to Swap</button>
-                        <button class="tab-btn" id="tabCombosBtn">⚡ Combos & Hazards</button>
-                    </div>
-
-                    <!-- Tab 1: How to Swap & Play -->
-                    <div class="tab-content" id="tabControls">
-                        <div class="rules-box">
-                            <p>1️⃣ <strong>Tap Tile:</strong> Tap any tile to select it (glowing green).</p>
-                            <p>2️⃣ <strong>Tap Neighbor:</strong> Tap an adjacent tile with gold border 🔲 to swap!</p>
-                            <p>3️⃣ <strong>Match 3+:</strong> Align 3 same tiles (✨ 💎 🌟) to score Energy.</p>
+                    <!-- Scrollable Content Area -->
+                    <div class="scrollable-rules-content">
+                        <div class="rule-section">
+                            <h3>🎮 How to Swap Blocks</h3>
+                            <p>1️⃣ <strong>Tap a Tile:</strong> Select any tile on the board (glowing green outline).</p>
+                            <p>2️⃣ <strong>Tap Neighbor:</strong> Tap an adjacent tile with a glowing gold border 🔲 to swap!</p>
                         </div>
-                    </div>
 
-                    <!-- Tab 2: Special Combos & Black Holes -->
-                    <div class="tab-content hidden" id="tabCombos">
-                        <div class="rules-box">
-                            <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Clears entire row & column!</p>
-                            <p>🌌 <strong>Match 5 (Quantum Core):</strong> Clears all target element tiles.</p>
-                            <p>🕳️ <strong>Contain 3 Black Holes:</strong> Match next to 🕳️ or hit with ⚡ laser!</p>
+                        <div class="rule-section">
+                            <h3>💎 Element Matches & Points</h3>
+                            <p>Align 3 or more matching tiles horizontally or vertically:</p>
+                            <p>✨ <strong>Stardust:</strong> 30 Energy | 💎 <strong>Crystal:</strong> 50 Energy | 🌟 <strong>Nova:</strong> 80 Energy</p>
+                        </div>
+
+                        <div class="rule-section">
+                            <h3>⚡ Special Combos</h3>
+                            <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Creates a Pulsar tile ⚡ that vaporizes its entire row & column when matched!</p>
+                            <p>🌌 <strong>Match 5 (Quantum Core):</strong> Creates a Core tile 🌌 that clears all tiles of that target element from the grid!</p>
+                        </div>
+
+                        <div class="rule-section">
+                            <h3>🕳️ Attacking & Containing Black Holes</h3>
+                            <p>Black holes drop into the reactor starting after Move 4.</p>
+                            <p>💥 <strong>Method 1:</strong> Match 3 tiles directly next to a 🕳️ Black Hole.</p>
+                            <p>⚡ <strong>Method 2:</strong> Blast a 🕳️ directly with a Line Pulsar laser beam!</p>
+                            <p>🚨 <strong>Expansion Penalty:</strong> Uncontained Black Holes expand after 2 turns, consuming tiles & deducting 50 Energy!</p>
+                        </div>
+
+                        <div class="rule-section">
+                            <h3>⭐ Star Rating Goals</h3>
+                            <p>⭐ <strong>1 Star:</strong> score under 1,200 Energy</p>
+                            <p>⭐⭐ <strong>2 Stars:</strong> reach 1,200 Target Energy</p>
+                            <p>⭐⭐⭐ <strong>3 Stars:</strong> reach 1,500+ Energy & contain 3 🕳️</p>
                         </div>
                     </div>
 
@@ -140,7 +153,7 @@
 
         <!-- Controls Hint Banner -->
         <div class="controls-hint">
-            <span>📱 <strong>Controls:</strong> Tap tile & tap adjacent highlighted tile to swap</span>
+            <span>📱 <strong>Controls:</strong> Tap tile & tap adjacent gold tile 🔲 to swap</span>
         </div>
     </div>
 

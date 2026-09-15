@@ -963,28 +963,6 @@ document.addEventListener('DOMContentLoaded', () => {
     infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
     closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
 
-    // Modal Mobile Navigation Tabs
-    const tabControlsBtn = document.getElementById('tabControlsBtn');
-    const tabCombosBtn = document.getElementById('tabCombosBtn');
-    const tabControls = document.getElementById('tabControls');
-    const tabCombos = document.getElementById('tabCombos');
-
-    if (tabControlsBtn && tabCombosBtn) {
-        tabControlsBtn.addEventListener('click', () => {
-            tabControlsBtn.classList.add('active');
-            tabCombosBtn.classList.remove('active');
-            if (tabControls) tabControls.classList.remove('hidden');
-            if (tabCombos) tabCombos.classList.add('hidden');
-        });
-
-        tabCombosBtn.addEventListener('click', () => {
-            tabCombosBtn.classList.add('active');
-            tabControlsBtn.classList.remove('active');
-            if (tabCombos) tabCombos.classList.remove('hidden');
-            if (tabControls) tabControls.classList.add('hidden');
-        });
-    }
-
     // Initialize Game
     initBoard();
     updateHUD();

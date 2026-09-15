@@ -122,28 +122,32 @@ html, body {
     box-shadow: 0 0 12px var(--accent-teal);
 }
 
-/* Bright Compact HUD Bar */
+/* Taller, Spacious & Structured HUD Bar */
 .compact-hud {
     width: 100%;
+    min-height: 56px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: rgba(15, 22, 45, 0.88);
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    background: rgba(15, 22, 45, 0.90);
     border: 1.5px solid var(--accent-teal);
     border-radius: 12px;
-    padding: 8px 12px;
+    padding: 8px 14px;
     backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(100, 255, 218, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(100, 255, 218, 0.15);
 }
 
 .hud-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 60px;
 }
 
 .hud-lbl {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-family: var(--font-orbitron);
     color: #cbd5e1;
     letter-spacing: 1px;
@@ -151,7 +155,7 @@ html, body {
 }
 
 .hud-val {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-family: var(--font-orbitron);
     font-weight: 900;
     color: var(--accent-gold);
@@ -159,26 +163,35 @@ html, body {
 }
 
 .hud-target {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #94a3b8;
     font-weight: 600;
 }
 
+/* Combo Badge Floating Slot */
 .status-tags-group {
     display: flex;
-    gap: 6px;
+    align-items: center;
+    justify-content: center;
 }
 
 .mini-tag {
     font-family: var(--font-orbitron);
-    font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 6px;
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    border-radius: 8px;
     font-weight: 900;
-    background: rgba(255, 209, 102, 0.3);
-    border: 1px solid var(--accent-gold);
+    background: rgba(255, 209, 102, 0.35);
+    border: 1.5px solid var(--accent-gold);
     color: var(--accent-gold);
-    text-shadow: 0 0 8px var(--accent-gold);
+    text-shadow: 0 0 10px var(--accent-gold);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.4);
+    animation: pulseBadge 0.8s infinite alternate;
+}
+
+@keyframes pulseBadge {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
 }
 
 .hidden {
@@ -236,7 +249,7 @@ html, body {
     80% { transform: translate(4px, -2px); }
 }
 
-/* Compact, Mobile-Friendly Modal Overlays */
+/* Modal Overlays */
 .overlay-screen {
     position: absolute;
     top: 0;
@@ -258,59 +271,20 @@ html, body {
     to { opacity: 1; }
 }
 
-.overlay-card {
+/* Detailed Scrollable Guide Card (Keeps Shape) */
+.scrollable-guide-card {
     background: rgba(18, 25, 48, 0.96);
     border: 2px solid var(--accent-teal);
-    border-radius: 14px;
-    padding: 14px 16px;
+    border-radius: 16px;
+    padding: 16px;
     width: 92%;
-    max-width: 330px;
-    max-height: 88vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(100, 255, 218, 0.4), 0 16px 50px rgba(0, 0, 0, 0.9);
+    max-width: 380px;
+    max-height: 86vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-}
-
-/* Easy Mobile Navigation Tabs */
-.modal-tabs {
-    display: flex;
-    width: 100%;
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-family: var(--font-orbitron);
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 6px 4px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    touch-action: manipulation;
-}
-
-.tab-btn.active {
-    background: var(--accent-teal);
-    color: #070913;
-    font-weight: 900;
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.4);
-}
-
-.tab-content {
-    width: 100%;
+    gap: 10px;
+    box-shadow: 0 0 30px rgba(100, 255, 218, 0.4), 0 16px 50px rgba(0, 0, 0, 0.9);
 }
 
 .badge {
@@ -326,27 +300,63 @@ html, body {
 
 .modal-title {
     font-family: var(--font-orbitron);
-    font-size: 1.0rem;
+    font-size: 1.05rem;
     color: var(--accent-gold);
     text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+    margin-bottom: 2px;
 }
 
-.rules-box {
-    text-align: left;
-    font-size: 0.78rem;
-    line-height: 1.4;
-    color: #e2e8f0;
-    background: rgba(0, 0, 0, 0.45);
-    padding: 10px 12px;
-    border-radius: 8px;
+/* Scrollable Rules Body */
+.scrollable-rules-content {
+    width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 54vh;
+    padding-right: 4px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%;
+    gap: 10px;
 }
 
-.rules-box strong {
+.scrollable-rules-content::-webkit-scrollbar {
+    width: 5px;
+}
+.scrollable-rules-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.scrollable-rules-content::-webkit-scrollbar-thumb {
+    background: var(--accent-teal);
+    border-radius: 4px;
+}
+
+.rule-section {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(100, 255, 218, 0.25);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rule-section h3 {
+    font-family: var(--font-orbitron);
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 209, 102, 0.2);
+    padding-bottom: 3px;
+}
+
+.rule-section p {
+    font-size: 0.78rem;
+    color: #e2e8f0;
+    line-height: 1.4;
+}
+
+.rule-section strong {
     color: #ffffff;
 }
 
@@ -468,6 +478,7 @@ html, body {
 
     .compact-hud {
         padding: 6px 8px;
+        min-height: 50px;
     }
 
     .hud-val {
