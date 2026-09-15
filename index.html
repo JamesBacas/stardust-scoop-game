@@ -3,35 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Stardust Scoop | Skill-Driven Modern Arcade Game</title>
+    <title>Stardust Reactor | Spatial Logic Puzzle Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="game.css">
 </head>
 <body>
-    <!-- Dynamic Theme Background Layer -->
-    <div id="themeBgLayer" class="theme-bg-layer theme-candy"></div>
+    <!-- Animated Deep Space Grid Layer -->
     <div id="starfield"></div>
 
     <div class="game-wrapper">
-        <!-- Streamlined Single-Row Control Bar with Clean Back Button -->
+        <!-- Compact Control Header -->
         <header class="game-header">
             <div class="header-left">
-                <button class="back-arrow-btn" id="headerHomeBtn" title="Back to Home Hub">←</button>
-                <select id="themeSelect" class="theme-select">
-                    <option value="candy">🍬 Candy Crush (Sweets)</option>
-                    <option value="space">🚀 Stardust Scoop (Space)</option>
-                    <option value="ocean">🌊 Ocean Diver (Sea)</option>
-                </select>
+                <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄</button>
+                <button class="icon-btn" id="infoBtn" title="How to Play & Objective">ℹ️</button>
             </div>
 
-            <h1 class="game-title" id="gameTitleDisplay">🍬 CANDY CRUSH</h1>
+            <h1 class="game-title">⚡ STARDUST REACTOR</h1>
 
             <div class="header-right">
-                <button class="pause-btn" id="pauseBtn" title="Pause Game (ESC / P)">⏸️</button>
-                <button class="info-btn" id="infoBtn" title="View Objective & Rules">ℹ️</button>
-                <div class="sound-toggle" id="soundToggle" title="Toggle Audio (SFX & Music)">
+                <div class="sound-toggle" id="soundToggle" title="Toggle Audio">
                     <span id="soundIcon">🔊</span>
                 </div>
             </div>
@@ -39,191 +32,106 @@
 
         <!-- Compact Integrated Game HUD Bar -->
         <div class="compact-hud">
+            <div class="hud-item moves-item">
+                <span class="hud-lbl">MOVES</span>
+                <span class="hud-val" id="movesValue">16</span>
+            </div>
+
             <div class="hud-item score-item">
-                <span class="hud-lbl">SCORE</span>
+                <span class="hud-lbl">ENERGY</span>
                 <span class="hud-val" id="scoreValue">0</span>
-                <span class="hud-target">/ <span id="targetValue">50</span></span>
+                <span class="hud-target">/ 1200</span>
             </div>
 
-            <!-- Arcade Progress Fill Bar -->
-            <div class="progress-bar-wrap" title="Score Progress">
-                <div class="progress-fill" id="progressFill"></div>
+            <div class="hud-item best-item">
+                <span class="hud-lbl">BEST</span>
+                <span class="hud-val" id="bestScoreValue" style="color: var(--accent-teal);">0</span>
             </div>
 
-            <div class="hud-item time-item">
-                <span class="hud-lbl">TIME</span>
-                <span class="hud-val timer-pulse" id="timerValue">60s</span>
+            <div class="hud-item hazard-item">
+                <span class="hud-lbl">BLACK HOLES</span>
+                <span class="hud-val" id="hazardValue">0/3 🕳️</span>
             </div>
 
-            <div class="hud-item lives-item">
-                <span class="hud-val lives-display" id="livesValue">❤️❤️❤️</span>
-            </div>
-
-            <!-- Compact Combo & Active Powerup Badges -->
+            <!-- Cascade Combo Badge -->
             <div class="status-tags-group">
-                <span class="mini-tag combo-tag" id="comboBadge">🔥 x1</span>
-                <span class="mini-tag fever-tag hidden" id="feverBadge">⚡ FEVER</span>
-                <span class="mini-tag overload-tag hidden" id="overloadBadge">🚨 OVERLOAD</span>
-                <span class="mini-tag pu-tag hidden" id="magnetTag">🧲</span>
-                <span class="mini-tag pu-tag hidden" id="chronoTag">⏳</span>
-                <span class="mini-tag pu-tag hidden" id="shieldTag">🛡️</span>
+                <span class="mini-tag combo-tag hidden" id="comboBadge">⚡ COMBO x1</span>
             </div>
         </div>
 
-        <!-- Main Canvas Area -->
+        <!-- Objective Banner -->
+        <div class="objective-banner">
+            🎯 <strong>Objective:</strong> Contain <span id="targetHolesText">3</span> Black Holes 🕳️ & Reach <span id="targetScoreText">1200</span> Energy!
+        </div>
+
+        <!-- Main Logic Canvas Container -->
         <div class="canvas-container" id="canvasContainer">
-            <!-- Hazard Drop Warning Overlay -->
-            <div class="hazard-warning hidden" id="hazardWarning">
-                <span class="warning-icon">⚠️</span> DANGER DROP
-            </div>
+            <canvas id="gameCanvas" width="540" height="540"></canvas>
 
-            <!-- Heat Wave Rush Surge Warning Overlay -->
-            <div class="surge-warning hidden" id="surgeWarning">
-                🚨 SPEED SURGE! DENSE WAVE!
-            </div>
-
-            <canvas id="gameCanvas" width="800" height="520"></canvas>
-
-            <!-- Home Screen / Main Menu Overlay Hub -->
-            <div class="overlay-screen" id="homeOverlay">
-                <div class="overlay-card home-card">
-                    <div class="badge">AGENT SKILL ARCADE HUB</div>
-                    <h2>ARCADE REALM HUB</h2>
-                    <p class="overlay-subtitle">Select your game world powered by AI Agent Skill JSON specifications!</p>
-                    
-                    <!-- 4 Theme Realm Cards -->
-                    <div class="realm-cards-grid">
-                        <div class="realm-card active" data-theme="candy">
-                            <span class="realm-icon">🍬</span>
-                            <div class="realm-info">
-                                <strong>Candy Crush</strong>
-                                <span>Gummy Catch</span>
-                            </div>
-                        </div>
-                        <div class="realm-card" data-theme="space">
-                            <span class="realm-icon">🚀</span>
-                            <div class="realm-info">
-                                <strong>Stardust Scoop</strong>
-                                <span>Cosmic Space</span>
-                            </div>
-                        </div>
-                        <div class="realm-card" data-theme="ocean">
-                            <span class="realm-icon">🌊</span>
-                            <div class="realm-info">
-                                <strong>Ocean Diver</strong>
-                                <span>Deep Trench</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="home-stat-bar">
-                        <span>🏆 Best High Score: <strong id="homeBestScore" style="color: var(--accent-gold);">0</strong> pts</span>
-                    </div>
-
-                    <button class="btn btn-start" id="homeStartBtn">🎮 Launch Game Realm</button>
-                </div>
-            </div>
-
-            <!-- Start Screen Overlay -->
-            <div class="overlay-screen hidden" id="startOverlay">
-                <div class="overlay-card">
-                    <div class="badge">AGENT SKILL POWERED</div>
-                    <h2 id="startTitle">CANDY CRUSH</h2>
-                    <p class="overlay-subtitle" id="startSubtitle">Catch items, trigger Fever Time & Powerups!</p>
-                    
-                    <div class="legend-grid" id="legendGrid">
-                        <!-- Populated dynamically -->
-                    </div>
-
-                    <div class="powerup-legend">
-                        <div class="p-item">🧲 <strong>Magnet</strong></div>
-                        <div class="p-item">⏳ <strong>Chrono</strong></div>
-                        <div class="p-item">🛡️ <strong>Shield</strong></div>
-                        <div class="p-item">❓ <strong>Mystery Box</strong></div>
-                    </div>
-
-                    <div class="btn-group-row">
-                        <button class="btn btn-secondary" id="startBackHomeBtn">← Back</button>
-                        <button class="btn btn-start" id="startBtn">🚀 Start Game</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pause Overlay Modal -->
-            <div class="overlay-screen hidden" id="pauseOverlay">
-                <div class="overlay-card">
-                    <div class="badge">GAME PAUSED</div>
-                    <h2>GAME PAUSED</h2>
-                    <p class="overlay-subtitle">Take a breather! Resume whenever you are ready.</p>
-                    <div class="btn-group-row" style="margin-top: 10px;">
-                        <button class="btn btn-secondary" id="pauseHomeBtn">← Menu</button>
-                        <button class="btn btn-start" id="resumeBtn">▶️ Resume</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Objective Info Overlay Modal -->
+            <!-- Objective Info / Instructions Modal -->
             <div class="overlay-screen hidden" id="infoOverlay">
                 <div class="overlay-card">
-                    <div class="badge">GAME OBJECTIVE</div>
-                    <h3 style="color: var(--accent-gold); font-size: 1.2rem;">🎯 High Stakes & Star System</h3>
-                    <div style="text-align: left; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 8px 0;">
-                        <p>⭐ <strong>1-Star Rating:</strong> Reach 50 Target Points.</p>
-                        <p>⭐⭐ <strong>2-Star Rating:</strong> Reach 80 Points.</p>
-                        <p>⭐⭐⭐ <strong>3-Star Rating:</strong> Reach 120 Points!</p>
-                        <p>❓ <strong>Mystery Boxes:</strong> Catch for jackpot points (+20) or risk a surprise bomb detonation!</p>
-                        <p>🚨 <strong>Speed Surges:</strong> Watch out at 30s and 15s for dense speed surges!</p>
+                    <div class="badge">GAME LOGIC & RULES</div>
+                    <h2 style="color: var(--accent-gold); font-size: 1.25rem; margin-bottom: 8px;">⚡ Stardust Reactor Rules</h2>
+                    
+                    <div class="rules-box">
+                        <p>🔹 <strong>Match 3+ Tiles:</strong> Align 3 identical tiles to harvest cosmic energy.</p>
+                        <p>⭐ <strong>Star System:</strong> 1 Star (&lt; 1,200 Energy), 2 Stars (1,200 Energy), 3 Stars (Beyond 1,200 Energy!)</p>
+                        <p>🕳️ <strong>Black Holes:</strong> Drop into orbit after Move 4! Match tiles next to a Black Hole or hit it with a Line Pulsar ⚡ to contain it!</p>
+                        <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Vaporizes its entire row & column!</p>
+                        <p>🌌 <strong>Match 5 (Quantum Core):</strong> Obliterates all tiles of the target element.</p>
+                        <p>📱 <strong>Controls:</strong> Tap or drag adjacent tiles on mobile & desktop.</p>
                     </div>
-                    <button class="btn btn-restart" id="closeInfoBtn">Got it!</button>
+
+                    <button class="btn btn-primary" id="closeInfoBtn">Got It!</button>
                 </div>
             </div>
 
-            <!-- Game Over / Victory Overlay Modal with 3-Star Rating -->
+            <!-- Game Over / Victory Overlay Modal -->
             <div class="overlay-screen hidden" id="endOverlay">
                 <div class="overlay-card">
-                    <div class="result-badge" id="resultBadge">MISSION ACCOMPLISHED</div>
-                    <h2 id="resultTitle">VICTORY!</h2>
+                    <div class="result-badge" id="resultBadge">STABILIZATION SUCCESS</div>
+                    <h2 id="resultTitle">VICTORY! 🎉</h2>
                     
-                    <!-- 3-Star Animated Rating Display -->
+                    <!-- 3-Star Rating Display -->
                     <div class="star-rating-display" id="starRatingDisplay">
                         <span class="star-icon" id="star1">★</span>
                         <span class="star-icon" id="star2">★</span>
                         <span class="star-icon" id="star3">★</span>
                     </div>
 
-                    <p class="result-msg" id="resultMsg">Mission complete!</p>
+                    <p class="result-msg" id="resultMsg">Reactor core stabilized successfully!</p>
                     
                     <div class="stats-summary">
                         <div class="stat-item">
-                            <span class="stat-lbl">Final Score</span>
+                            <span class="stat-lbl">Final Energy</span>
                             <span class="stat-val" id="finalScore">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-lbl">Max Combo</span>
-                            <span class="stat-val" id="maxCombo">x1</span>
+                            <span class="stat-lbl">Moves Remaining</span>
+                            <span class="stat-val" id="finalMoves">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-lbl">Best Score</span>
-                            <span class="stat-val" id="bestScore">0</span>
+                            <span class="stat-lbl">Black Holes Destroyed</span>
+                            <span class="stat-val" id="finalHazards">0</span>
                         </div>
                     </div>
 
                     <div class="btn-group-row">
-                        <button class="btn btn-secondary" id="endHomeBtn">← Menu</button>
-                        <button class="btn btn-restart" id="restartBtn">🔄 Play Again</button>
+                        <button class="btn btn-restart" id="restartOverlayBtn">🔄 Re-initialize Reactor</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Controls Banner -->
+        <!-- Controls Hint Banner -->
         <div class="controls-hint">
-            <span>💻 <strong>Controls:</strong> Mouse move or <code>← / A</code> & <code>→ / D</code> keys (Press <code>ESC / P</code> to Pause)</span>
-            <span>📱 <strong>Mobile:</strong> Touch & drag across screen</span>
+            <span>💻 <strong>Desktop:</strong> Click tile & click/drag adjacent to swap</span>
+            <span>📱 <strong>Mobile:</strong> Tap tile & tap/swipe adjacent tile</span>
         </div>
     </div>
 
-    <!-- Game Engine Scripts -->
+    <!-- Logic Engine Script -->
     <script src="game.js"></script>
 </body>
 </html>

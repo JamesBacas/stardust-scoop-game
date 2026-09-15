@@ -1,150 +1,27 @@
-/* Modern Arcade Engine - Stardust Scoop & Multi-Theme Skill Arcade */
+/* Stardust Reactor - Spatial Logic Puzzle Engine */
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Named Game Constants ---
-    const DEFAULT_TARGET_SCORE = 50;
-    const DEFAULT_SESSION_SECONDS = 60;
-    const DEFAULT_STARTING_LIVES = 3;
+    // --- Constants ---
+    const GRID_SIZE = 6;
+    const DEFAULT_MOVES = 16; // Tighter Move Limit Cap for higher difficulty!
+    const TARGET_SCORE = 1200;
+    const TARGET_BLACK_HOLES = 3;
+    const MAX_ACTIVE_BLACK_HOLES = 2; // Active Black Hole Board Cap
 
-    const PADDLE_WIDTH = 120;
-    const PADDLE_HEIGHT = 24;
-    const POWERUP_SPAWN_CHANCE = 0.10;
-    const GOOD_ITEM_SPAWN_CHANCE = 0.65;
-    const RARE_RARITY_THRESHOLD = 0.88;
-    const UNCOMMON_RARITY_THRESHOLD = 0.58;
-
-    const TWO_STAR_SCORE_THRESHOLD = 80;
-    const THREE_STAR_SCORE_THRESHOLD = 120;
-
-    const MYSTERY_JACKPOT_CHANCE = 0.5;
-    const MYSTERY_JACKPOT_POINTS = 20;
-
-    const DEFAULT_DIFFICULTY_CURVE = [
-        { time_seconds: 0, fall_speed_multiplier: 1.0, spawn_rate_multiplier: 1.0 },
-        { time_seconds: 15, fall_speed_multiplier: 1.25, spawn_rate_multiplier: 1.25 },
-        { time_seconds: 30, fall_speed_multiplier: 1.55, spawn_rate_multiplier: 1.5 },
-        { time_seconds: 45, fall_speed_multiplier: 1.9, spawn_rate_multiplier: 1.85 }
+    const TILE_TYPES = [
+        { id: 'stardust', symbol: '✨', color: '#64ffda', score: 30, matchable: true },
+        { id: 'crystal', symbol: '💎', color: '#bd5fff', score: 50, matchable: true },
+        { id: 'nova', symbol: '🌟', color: '#ffd166', score: 80, matchable: true }
     ];
 
-    // --- Predefined Skill Themes ---
-    const THEMES = {
-        candy: {
-            title: "🍬 CANDY CRUSH",
-            life_icon: "🩷",
-            target_score: DEFAULT_TARGET_SCORE,
-            session_seconds: DEFAULT_SESSION_SECONDS,
-            starting_lives: DEFAULT_STARTING_LIVES,
-            items: {
-                good: [
-                    { id: "grape", name: "Juicy Grape", points: 1, emoji: "🍇", rarity: "common", color: "#bd5fff", size: 28 },
-                    { id: "strawberry", name: "Ripe Strawberry", points: 3, emoji: "🍓", rarity: "common", color: "#ff4d4d", size: 30 },
-                    { id: "gummy", name: "Gummy Bear", points: 5, emoji: "🧸", rarity: "uncommon", color: "#70d6ff", size: 32 },
-                    { id: "orange", name: "Orange Slice", points: 5, emoji: "🍊", rarity: "uncommon", color: "#ff9770", size: 32 },
-                    { id: "candy", name: "Magic Candy", points: 15, emoji: "🍬", rarity: "rare", color: "#ff70a6", size: 36 }
-                ],
-                bad: [
-                    { id: "chili", name: "Spicy Chili", points: -1, emoji: "🌶️", rarity: "common", color: "#ff4d4d", size: 28 },
-                    { id: "trash", name: "Apple Core", points: -3, emoji: "🍏", rarity: "common", color: "#a8db10", size: 32 },
-                    { id: "slime", name: "Toxic Slime", points: -5, emoji: "🧪", rarity: "uncommon", color: "#39ff14", size: 34 },
-                    { id: "bomb", name: "Candy Bomb", points: -10, emoji: "💣", rarity: "rare", color: "#2b2b2b", size: 38, deduct_life: true }
-                ],
-                powerups: [
-                    { id: "magnet", name: "Candy Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
-                    { id: "chrono", name: "Sugar Slow-Mo", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Jelly Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
-                    { id: "heal", name: "Sugar Heart", type: "heal", emoji: "💖", rarity: "rare", color: "#ff4d6d", size: 34 },
-                    { id: "mystery", name: "Mystery Box", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
-                ]
-            },
-            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
-            messages: {
-                win: "Sugar Rush Victory! You collected {score} points of juicy candies. 🍬",
-                lose: "Tummy ache overload... You collected {score} points. Try again!",
-                restart_button: "Play Again"
-            }
-        },
+    const BLACK_HOLE_TILE = { id: 'blackhole', symbol: '🕳️', color: '#ff0054', score: 200, matchable: false };
+    const PULSAR_TILE = { id: 'pulsar', symbol: '⚡', color: '#00b4d8', score: 150, matchable: true, isSpecial: true };
+    const CORE_TILE = { id: 'core', symbol: '🌌', color: '#ff70a6', score: 300, matchable: true, isSpecial: true };
 
-        space: {
-            title: "✨ STARDUST SCOOP",
-            life_icon: "⚡",
-            target_score: DEFAULT_TARGET_SCORE,
-            session_seconds: DEFAULT_SESSION_SECONDS,
-            starting_lives: DEFAULT_STARTING_LIVES,
-            items: {
-                good: [
-                    { id: "stardust", name: "Stardust", points: 1, emoji: "✨", rarity: "common", color: "#64ffda", size: 28 },
-                    { id: "comet", name: "Comet Fragment", points: 3, emoji: "☄️", rarity: "common", color: "#00b4d8", size: 30 },
-                    { id: "crystal", name: "Power Crystal", points: 5, emoji: "💎", rarity: "uncommon", color: "#bd5fff", size: 32 },
-                    { id: "satellite", name: "Satellite Part", points: 5, emoji: "🛰️", rarity: "uncommon", color: "#48cae4", size: 32 },
-                    { id: "nova", name: "Golden Nova", points: 15, emoji: "🌟", rarity: "rare", color: "#ffd166", size: 36 }
-                ],
-                bad: [
-                    { id: "junk", name: "Space Junk", points: -1, emoji: "🗑️", rarity: "common", color: "#8d99ae", size: 28 },
-                    { id: "asteroid", name: "Asteroid", points: -3, emoji: "🪨", rarity: "common", color: "#a0aab2", size: 32 },
-                    { id: "meteor", name: "Meteor", points: -5, emoji: "🔥", rarity: "uncommon", color: "#ef476f", size: 34 },
-                    { id: "blackhole", name: "Black Hole", points: -10, emoji: "🕳️", rarity: "rare", color: "#bd5fff", size: 38, deduct_life: true }
-                ],
-                powerups: [
-                    { id: "magnet", name: "Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
-                    { id: "chrono", name: "Chrono Warp", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Energy Shield", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
-                    { id: "heal", name: "Energy Cell", type: "heal", emoji: "🔋", rarity: "rare", color: "#00f5d4", size: 34 },
-                    { id: "mystery", name: "Mystery Crate", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
-                ]
-            },
-            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
-            messages: {
-                win: "Mission complete! You scooped {score} points of cosmic energy across the galaxy. 🚀",
-                lose: "Ship's shield collapsed... You collected {score} points. The cosmos awaits another run.",
-                restart_button: "Launch Again"
-            }
-        },
-
-        ocean: {
-            title: "🌊 OCEAN DIVER",
-            life_icon: "🤿",
-            target_score: DEFAULT_TARGET_SCORE,
-            session_seconds: DEFAULT_SESSION_SECONDS,
-            starting_lives: DEFAULT_STARTING_LIVES,
-            items: {
-                good: [
-                    { id: "shell", name: "Sea Shell", points: 1, emoji: "🐚", rarity: "common", color: "#e0fbfc", size: 28 },
-                    { id: "pearl", name: "Shining Pearl", points: 3, emoji: "🦪", rarity: "common", color: "#98c1d9", size: 30 },
-                    { id: "trident", name: "Golden Trident", points: 5, emoji: "🔱", rarity: "uncommon", color: "#ffd166", size: 32 },
-                    { id: "gem", name: "Ocean Emerald", points: 5, emoji: "💎", rarity: "uncommon", color: "#06d6a0", size: 32 },
-                    { id: "chest", name: "Treasure Chest", points: 15, emoji: "🪙", rarity: "rare", color: "#ffb703", size: 36 }
-                ],
-                bad: [
-                    { id: "urchin", name: "Sea Urchin", points: -1, emoji: "🦔", rarity: "common", color: "#3d5a80", size: 28 },
-                    { id: "jellyfish", name: "Electric Jelly", points: -3, emoji: "🪼", rarity: "common", color: "#ff006e", size: 32 },
-                    { id: "shark", name: "Great Shark", points: -5, emoji: "🦈", rarity: "uncommon", color: "#293241", size: 34 },
-                    { id: "seamine", name: "Deep Sea Mine", points: -10, emoji: "💥", rarity: "rare", color: "#d90429", size: 38, deduct_life: true }
-                ],
-                powerups: [
-                    { id: "magnet", name: "Pearl Magnet", type: "magnet", emoji: "🧲", rarity: "uncommon", color: "#ff0054", size: 34 },
-                    { id: "chrono", name: "Ocean Drift", type: "chrono", emoji: "⏳", rarity: "uncommon", color: "#00f5d4", size: 34 },
-                    { id: "shield", name: "Sub Bubble", type: "shield", emoji: "🛡️", rarity: "rare", color: "#70d6ff", size: 34 },
-                    { id: "heal", name: "Oxygen Tank", type: "heal", emoji: "🫧", rarity: "rare", color: "#70d6ff", size: 34 },
-                    { id: "mystery", name: "Mystery Chest", type: "mystery", emoji: "❓", rarity: "rare", color: "#ffd166", size: 36 }
-                ]
-            },
-            difficulty_curve: DEFAULT_DIFFICULTY_CURVE,
-            messages: {
-                win: "Ocean Master! You retrieved {score} points of sunken treasure. 🌊",
-                lose: "Lost in the deep trenches... You scored {score} points. Dive again!",
-                restart_button: "Dive Again"
-            }
-        }
-    };
-
-    let activeThemeKey = 'candy';
-    let currentConfig = THEMES[activeThemeKey];
-
-    // --- Web Audio Synthesizer with Pitch-Scaling Harmony ---
+    // --- Web Audio Synthesizer ---
     class SoundEngine {
         constructor() {
             this.ctx = null;
             this.muted = false;
-            this.scaleNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
         }
 
         init() {
@@ -182,37 +59,29 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { }
         }
 
-        playCatch(streak = 0) {
-            const noteIdx = streak % this.scaleNotes.length;
-            const freq = this.scaleNotes[noteIdx];
-            this.playTone(freq, 'sine', 0.1, 0.18, freq * 1.2);
-        }
-        
-        playCombo(multiplier) {
-            const baseFreq = 523 * (1 + multiplier * 0.15);
-            this.playTone(baseFreq, 'triangle', 0.14, 0.18, baseFreq * 1.5);
+        playSelect() { this.playTone(440, 'sine', 0.08, 0.12); }
+        playSwap() { this.playTone(523.25, 'triangle', 0.1, 0.15, 659.25); }
+        playInvalid() { this.playTone(220, 'sawtooth', 0.15, 0.15, 110); }
+
+        playMatch(combo = 1) {
+            const baseFreq = 440 * Math.pow(1.15, combo - 1);
+            this.playTone(baseFreq, 'sine', 0.15, 0.2, baseFreq * 1.4);
         }
 
-        playFeverSound() {
-            const notes = [659, 784, 987, 1318];
+        playPulsar() {
+            this.playTone(880, 'sawtooth', 0.35, 0.25, 220);
+        }
+
+        playBlackHoleExplosion() {
+            this.playTone(150, 'sawtooth', 0.4, 0.3, 50);
+        }
+
+        playVictory() {
+            const notes = [523, 659, 784, 1046, 1318];
             notes.forEach((freq, idx) => {
-                setTimeout(() => this.playTone(freq, 'sine', 0.15, 0.2), idx * 60);
+                setTimeout(() => this.playTone(freq, 'sine', 0.2, 0.2), idx * 80);
             });
         }
-
-        playPowerup() {
-            const notes = [523, 659, 784, 1046];
-            notes.forEach((freq, idx) => {
-                setTimeout(() => this.playTone(freq, 'triangle', 0.12, 0.15), idx * 50);
-            });
-        }
-
-        playSurge() {
-            this.playTone(440, 'sawtooth', 0.3, 0.25, 880);
-        }
-
-        playHit() { this.playTone(200, 'sawtooth', 0.22, 0.2, 70); }
-        playShieldAbsorb() { this.playTone(880, 'sine', 0.2, 0.18, 440); }
 
         playGameOver() {
             const notes = [440, 349, 293, 220];
@@ -220,801 +89,799 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => this.playTone(freq, 'sawtooth', 0.25, 0.2), idx * 110);
             });
         }
-
-        playVictory() {
-            const notes = [523, 659, 784, 1046, 1318];
-            notes.forEach((freq, idx) => {
-                setTimeout(() => this.playTone(freq, 'sine', 0.2, 0.2), idx * 75);
-            });
-        }
     }
 
     const audio = new SoundEngine();
 
     // --- DOM Elements ---
-    const themeBgLayer = document.getElementById('themeBgLayer');
     const canvasContainer = document.getElementById('canvasContainer');
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    canvas.style.touchAction = 'none';
 
-    const headerHomeBtn = document.getElementById('headerHomeBtn');
-    const themeSelect = document.getElementById('themeSelect');
-    const gameTitleDisplay = document.getElementById('gameTitleDisplay');
+    const movesValue = document.getElementById('movesValue');
+    const scoreValue = document.getElementById('scoreValue');
+    const bestScoreValue = document.getElementById('bestScoreValue');
+    const hazardValue = document.getElementById('hazardValue');
+    const comboBadge = document.getElementById('comboBadge');
+
+    const restartHeaderBtn = document.getElementById('restartHeaderBtn');
+    const restartOverlayBtn = document.getElementById('restartOverlayBtn');
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
-    const pauseBtn = document.getElementById('pauseBtn');
     const infoBtn = document.getElementById('infoBtn');
-
-    const scoreValue = document.getElementById('scoreValue');
-    const targetValue = document.getElementById('targetValue');
-    const timerValue = document.getElementById('timerValue');
-    const livesValue = document.getElementById('livesValue');
-    const progressFill = document.getElementById('progressFill');
-
-    const comboBadge = document.getElementById('comboBadge');
-    const feverBadge = document.getElementById('feverBadge');
-    const hazardWarning = document.getElementById('hazardWarning');
-    const surgeWarning = document.getElementById('surgeWarning');
-
-    const magnetTag = document.getElementById('magnetTag');
-    const chronoTag = document.getElementById('chronoTag');
-    const shieldTag = document.getElementById('shieldTag');
-    const overloadBadge = document.getElementById('overloadBadge');
-
-    const homeOverlay = document.getElementById('homeOverlay');
-    const homeBestScore = document.getElementById('homeBestScore');
-    const homeStartBtn = document.getElementById('homeStartBtn');
-    const realmCards = document.querySelectorAll('.realm-card');
-
-    const startOverlay = document.getElementById('startOverlay');
-    const startBackHomeBtn = document.getElementById('startBackHomeBtn');
-    const pauseOverlay = document.getElementById('pauseOverlay');
-    const pauseHomeBtn = document.getElementById('pauseHomeBtn');
-    const resumeBtn = document.getElementById('resumeBtn');
-    const infoOverlay = document.getElementById('infoOverlay');
     const closeInfoBtn = document.getElementById('closeInfoBtn');
-    const endOverlay = document.getElementById('endOverlay');
-    const endHomeBtn = document.getElementById('endHomeBtn');
-    const startBtn = document.getElementById('startBtn');
-    const restartBtn = document.getElementById('restartBtn');
 
-    const startTitle = document.getElementById('startTitle');
-    const legendGrid = document.getElementById('legendGrid');
+    const infoOverlay = document.getElementById('infoOverlay');
+    const endOverlay = document.getElementById('endOverlay');
+
+    const resultBadge = document.getElementById('resultBadge');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultMsg = document.getElementById('resultMsg');
+    const finalScore = document.getElementById('finalScore');
+    const finalMoves = document.getElementById('finalMoves');
+    const finalHazards = document.getElementById('finalHazards');
 
     const star1 = document.getElementById('star1');
     const star2 = document.getElementById('star2');
     const star3 = document.getElementById('star3');
 
-    const resultTitle = document.getElementById('resultTitle');
-    const resultMsg = document.getElementById('resultMsg');
-    const finalScore = document.getElementById('finalScore');
-    const maxComboDisplay = document.getElementById('maxCombo');
-    const bestScoreDisplay = document.getElementById('bestScore');
-
-    let bestScore = parseInt(localStorage.getItem('stardust_best_score') || '0', 10);
-    homeBestScore.textContent = bestScore;
-
-    // --- Navigation & Menu Handlers ---
-    function openHomeHub() {
-        gameState = 'START';
-        audio.init();
-        homeBestScore.textContent = bestScore;
-        homeOverlay.classList.remove('hidden');
-        startOverlay.classList.add('hidden');
-        pauseOverlay.classList.add('hidden');
-        endOverlay.classList.add('hidden');
-        infoOverlay.classList.add('hidden');
-    }
-
-    function togglePause() {
-        if (gameState === 'PLAYING') {
-            gameState = 'PAUSED';
-            pauseOverlay.classList.remove('hidden');
-        } else if (gameState === 'PAUSED') {
-            gameState = 'PLAYING';
-            pauseOverlay.classList.add('hidden');
-            lastTime = performance.now();
-            requestAnimationFrame(gameLoop);
-        }
-    }
-
-    // Consolidated Home Navigation Event Listeners
-    [headerHomeBtn, startBackHomeBtn, pauseHomeBtn, endHomeBtn].forEach(btn => {
-        if (btn) btn.addEventListener('click', openHomeHub);
-    });
-
-    pauseBtn.addEventListener('click', togglePause);
-    resumeBtn.addEventListener('click', togglePause);
-
-    // Realm Cards Click Selection
-    realmCards.forEach(card => {
-        card.addEventListener('click', () => {
-            realmCards.forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-            activeThemeKey = card.dataset.theme;
-            themeSelect.value = activeThemeKey;
-            currentConfig = THEMES[activeThemeKey];
-            updateThemeUI();
-        });
-    });
-
-    homeStartBtn.addEventListener('click', () => {
-        homeOverlay.classList.add('hidden');
-        startOverlay.classList.remove('hidden');
-    });
-
-    soundToggle.addEventListener('click', () => {
-        const isMuted = audio.toggleMute();
-        soundIcon.textContent = isMuted ? '🔇' : '🔊';
-    });
-
-    infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
-    closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
-
-    themeSelect.value = activeThemeKey;
-    themeSelect.addEventListener('change', (e) => {
-        activeThemeKey = e.target.value;
-        currentConfig = THEMES[activeThemeKey];
-
-        realmCards.forEach(card => {
-            card.classList.toggle('active', card.dataset.theme === activeThemeKey);
-        });
-
-        updateThemeUI();
-        if (gameState === 'PLAYING') resetGame();
-    });
-
-    function updateThemeUI() {
-        gameTitleDisplay.textContent = currentConfig.title;
-        targetValue.textContent = currentConfig.target_score;
-        startTitle.textContent = currentConfig.title;
-
-        themeBgLayer.className = `theme-bg-layer theme-${activeThemeKey}`;
-
-        legendGrid.innerHTML = '';
-        const allItems = [...currentConfig.items.good, ...currentConfig.items.bad];
-        allItems.forEach(item => {
-            const isGood = item.points > 0;
-            const div = document.createElement('div');
-            div.className = `legend-item ${isGood ? '' : 'bad'}`;
-            div.innerHTML = `<span class="legend-emoji">${item.emoji}</span> ${item.name} (${isGood ? '+' : ''}${item.points})`;
-            legendGrid.appendChild(div);
-        });
-    }
-
-    // --- Game State Vars ---
-    let gameState = 'START';
+    // --- Game State Variables ---
+    let grid = [];
+    let movesLeft = DEFAULT_MOVES;
     let score = 0;
-    let lives = DEFAULT_STARTING_LIVES;
-    let timer = DEFAULT_SESSION_SECONDS;
-    let comboStreak = 0;
-    let maxComboStreak = 0;
-    let badItemStreak = 0;
-    let overloadTimer = 0;
-    let isFeverMode = false;
-    let isSurgeActive = false;
-
-    let powerupState = {
-        magnetTimer: 0,
-        chronoTimer: 0,
-        hasShield: false
-    };
-
-    let lastTime = 0;
-    let spawnTimer = 0;
-    let items = [];
+    let bestScore = parseInt(localStorage.getItem('stardust_reactor_best_score') || '0', 10);
+    let blackHolesDestroyed = 0;
+    let movesSinceLastBHSpawn = 2; // Non-consecutive turn cooldown
+    let selectedCell = null; // { r, c }
+    let isAnimating = false;
+    let gameState = 'PLAYING'; // 'PLAYING', 'VICTORY', 'GAMEOVER'
     let particles = [];
-    let thrusterParticles = [];
+    let laserLines = [];
     let floatingTexts = [];
-    let keys = {};
+    let touchStartPos = null;
 
-    const paddle = {
-        x: canvas.width / 2,
-        y: canvas.height - 45,
-        width: PADDLE_WIDTH,
-        height: PADDLE_HEIGHT,
-        targetX: canvas.width / 2,
-        speed: 700,
-        tilt: 0,
-        scaleY: 1.0
-    };
+    if (bestScoreValue) bestScoreValue.textContent = bestScore;
 
-    // --- Input Handlers ---
-    canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        paddle.targetX = (e.clientX - rect.left) * scaleX;
-    });
+    // Grid Metrics
+    let cellSize = canvas.width / GRID_SIZE;
 
-    function triggerHaptic(pattern = 20) {
-        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
-            try { navigator.vibrate(pattern); } catch (err) {}
-        }
+    // --- Board Logic Functions ---
+
+    function createRandomTile() {
+        const rand = TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)];
+        return { ...rand, turns: 0, animY: 0, animX: 0, scale: 1.0 };
     }
 
-    const handleTouch = (e) => {
-        if (e.touches && e.touches.length > 0) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            paddle.targetX = (e.touches[0].clientX - rect.left) * scaleX;
-        }
-    };
-
-    [canvas, canvasContainer, window].forEach(target => {
-        if (target) {
-            target.addEventListener('touchstart', (e) => {
-                if (gameState === 'PLAYING') { audio.init(); handleTouch(e); }
-            }, { passive: true });
-            target.addEventListener('touchmove', (e) => {
-                if (gameState === 'PLAYING') handleTouch(e);
-            }, { passive: true });
-        }
-    });
-
-    window.addEventListener('keydown', (e) => {
-        audio.init();
-        keys[e.code] = true;
-        if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
-    });
-    window.addEventListener('keyup', (e) => { keys[e.code] = false; });
-
-    // --- Helpers ---
-    function triggerScreenShake() {
-        triggerHaptic([45, 30, 45]);
-        canvasContainer.classList.remove('shake');
-        void canvasContainer.offsetWidth;
-        canvasContainer.classList.add('shake');
-    }
-
-    function triggerHazardWarning() {
-        hazardWarning.classList.remove('hidden');
-        setTimeout(() => hazardWarning.classList.add('hidden'), 1000);
-    }
-
-    function triggerSurgeWarning() {
-        isSurgeActive = true;
-        audio.playSurge();
-        surgeWarning.classList.remove('hidden');
-        setTimeout(() => {
-            surgeWarning.classList.add('hidden');
-            isSurgeActive = false;
-        }, 4000);
-    }
-
-    function getDifficultyMultiplier(elapsedSeconds) {
-        const curve = currentConfig.difficulty_curve;
-        let currentStage = curve[0];
-        for (let stage of curve) {
-            if (elapsedSeconds >= stage.time_seconds) {
-                currentStage = stage;
+    function activeBlackHoleCount() {
+        let count = 0;
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (grid[r] && grid[r][c] && grid[r][c].id === 'blackhole') count++;
             }
         }
-        return currentStage;
+        return count;
     }
 
-    function getRandomItem(elapsedSeconds) {
-        if (Math.random() < POWERUP_SPAWN_CHANCE) {
-            const puPool = currentConfig.items.powerups;
-            const selectedPu = puPool[Math.floor(Math.random() * puPool.length)];
-            return {
-                ...selectedPu,
-                x: 40 + Math.random() * (canvas.width - 80),
-                y: -30,
-                velocityY: 140,
-                isPowerup: true
-            };
+    function hasEmptyCells() {
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (grid[r] && grid[r][c] && grid[r][c].id === 'empty') return true;
+            }
         }
-
-        const isGood = Math.random() < GOOD_ITEM_SPAWN_CHANCE;
-        const pool = isGood ? currentConfig.items.good : currentConfig.items.bad;
-
-        const rarityRoll = Math.random();
-        let rarityFilter = 'common';
-        if (rarityRoll > RARE_RARITY_THRESHOLD && elapsedSeconds > 20) rarityFilter = 'rare';
-        else if (rarityRoll > UNCOMMON_RARITY_THRESHOLD) rarityFilter = 'uncommon';
-
-        const filtered = pool.filter(i => i.rarity === rarityFilter);
-        const selected = filtered.length > 0 ? filtered[Math.floor(Math.random() * filtered.length)] : pool[0];
-
-        if (selected.deduct_life) {
-            triggerHazardWarning();
-        }
-
-        return {
-            ...selected,
-            x: 40 + Math.random() * (canvas.width - 80),
-            y: -30,
-            velocityY: 140 + Math.random() * 60,
-            isGood: isGood,
-            isPowerup: false
-        };
+        return false;
     }
+
+    function initBoard() {
+        grid = [];
+        for (let r = 0; r < GRID_SIZE; r++) {
+            grid[r] = [];
+            for (let c = 0; c < GRID_SIZE; c++) {
+                grid[r][c] = createRandomTile();
+            }
+        }
+
+        // Board starts clean with 0 Black Holes so players can learn & build combos first!
+        clearMatchesInitial();
+    }
+
+    function clearMatchesInitial() {
+        let matches = findMatches();
+        let safetyCounter = 0;
+        while (matches.length > 0 && safetyCounter < 50) {
+            safetyCounter++;
+            for (let m of matches) {
+                grid[m.r][m.c] = createRandomTile();
+            }
+            matches = findMatches();
+        }
+    }
+
+    function findMatches() {
+        let matched = [];
+        let matchedSet = new Set();
+
+        // Check horizontal matches
+        for (let r = 0; r < GRID_SIZE; r++) {
+            let matchLength = 1;
+            for (let c = 0; c < GRID_SIZE; c++) {
+                let checkNext = false;
+                if (c < GRID_SIZE - 1) {
+                    const t1 = grid[r][c];
+                    const t2 = grid[r][c + 1];
+                    if (t1 && t2 && t1.matchable && t2.matchable && t1.id === t2.id) {
+                        matchLength++;
+                        checkNext = true;
+                    }
+                }
+                if (!checkNext) {
+                    if (matchLength >= 3) {
+                        for (let k = 0; k < matchLength; k++) {
+                            const matchC = c - k;
+                            const key = `${r},${matchC}`;
+                            if (!matchedSet.has(key)) {
+                                matchedSet.add(key);
+                                matched.push({ r, c: matchC, length: matchLength, dir: 'h' });
+                            }
+                        }
+                    }
+                    matchLength = 1;
+                }
+            }
+        }
+
+        // Check vertical matches
+        for (let c = 0; c < GRID_SIZE; c++) {
+            let matchLength = 1;
+            for (let r = 0; r < GRID_SIZE; r++) {
+                let checkNext = false;
+                if (r < GRID_SIZE - 1) {
+                    const t1 = grid[r][c];
+                    const t2 = grid[r + 1][c];
+                    if (t1 && t2 && t1.matchable && t2.matchable && t1.id === t2.id) {
+                        matchLength++;
+                        checkNext = true;
+                    }
+                }
+                if (!checkNext) {
+                    if (matchLength >= 3) {
+                        for (let k = 0; k < matchLength; k++) {
+                            const matchR = r - k;
+                            const key = `${matchR},${c}`;
+                            if (!matchedSet.has(key)) {
+                                matchedSet.add(key);
+                                matched.push({ r: matchR, c, length: matchLength, dir: 'v' });
+                            }
+                        }
+                    }
+                    matchLength = 1;
+                }
+            }
+        }
+
+        return matched;
+    }
+
+    // --- User Action & Swap Mechanics ---
+
+    function handleCellClick(r, c) {
+        if (gameState !== 'PLAYING' || isAnimating) return;
+
+        audio.init();
+
+        if (!selectedCell) {
+            selectedCell = { r, c };
+            audio.playSelect();
+        } else {
+            const r1 = selectedCell.r;
+            const c1 = selectedCell.c;
+            const r2 = r;
+            const c2 = c;
+
+            const isAdjacent = (Math.abs(r1 - r2) + Math.abs(c1 - c2)) === 1;
+
+            if (r1 === r2 && c1 === c2) {
+                // Deselect on clicking same cell
+                selectedCell = null;
+            } else if (isAdjacent) {
+                // Attempt Swap!
+                attemptSwap(r1, c1, r2, c2);
+                selectedCell = null;
+            } else {
+                // Select new cell
+                selectedCell = { r, c };
+                audio.playSelect();
+            }
+        }
+    }
+
+    async function attemptSwap(r1, c1, r2, c2) {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Perform swap
+        const tile1 = grid[r1][c1];
+        const tile2 = grid[r2][c2];
+
+        grid[r1][c1] = tile2;
+        grid[r2][c2] = tile1;
+
+        audio.playSwap();
+
+        // Check for Special triggers or valid matches
+        let isSpecialTrigger = (tile1.isSpecial || tile2.isSpecial);
+        let matches = findMatches();
+
+        if (!isSpecialTrigger && matches.length === 0) {
+            // Invalid swap -> Revert swap smoothly
+            audio.playInvalid();
+            await new Promise(res => setTimeout(res, 180));
+            grid[r1][c1] = tile1;
+            grid[r2][c2] = tile2;
+            isAnimating = false;
+            return;
+        }
+
+        // Valid move confirmed! Deduct 1 move
+        movesLeft--;
+        movesSinceLastBHSpawn++;
+        updateHUD();
+
+        // Handle Special tile swap triggers if present
+        if (tile1.id === 'pulsar' || tile2.id === 'pulsar') {
+            triggerPulsarLaser(tile1.id === 'pulsar' ? r2 : r1, tile1.id === 'pulsar' ? c2 : c1);
+        }
+        if (tile1.id === 'core' || tile2.id === 'core') {
+            const targetTile = tile1.id === 'core' ? tile2 : tile1;
+            triggerQuantumCore(targetTile.id);
+        }
+
+        // Resolve cascades and matches
+        await processCascades(r1, c1, r2, c2);
+
+        // Turn-based Black Hole Expansion check
+        await checkBlackHoleExpansion();
+
+        // Check Win/Loss conditions
+        checkGameEndState();
+
+        isAnimating = false;
+    }
+
+    function triggerPulsarLaser(r, c) {
+        audio.playPulsar();
+        laserLines.push({ type: 'row', r, alpha: 1.0 });
+        laserLines.push({ type: 'col', c, alpha: 1.0 });
+
+        // Vaporize row
+        for (let col = 0; col < GRID_SIZE; col++) {
+            destroyTileAt(r, col);
+        }
+        // Vaporize column
+        for (let row = 0; row < GRID_SIZE; row++) {
+            destroyTileAt(row, c);
+        }
+    }
+
+    function triggerQuantumCore(targetId) {
+        audio.playPulsar();
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (grid[r][c].id === targetId) {
+                    destroyTileAt(r, c);
+                }
+            }
+        }
+    }
+
+    function destroyTileAt(r, c) {
+        const tile = grid[r][c];
+        if (!tile || tile.id === 'empty') return;
+
+        if (tile.id === 'blackhole') {
+            blackHolesDestroyed++;
+            score += BLACK_HOLE_TILE.score;
+            audio.playBlackHoleExplosion();
+            triggerScreenShake();
+            createExplosion(c * cellSize + cellSize / 2, r * cellSize + cellSize / 2, '#ff0054', 28);
+            addFloatingText("🕳️ CONTAINED! +200", c * cellSize + cellSize / 2, r * cellSize + cellSize / 2, '#ff0054', 1.2);
+        } else {
+            createExplosion(c * cellSize + cellSize / 2, r * cellSize + cellSize / 2, tile.color, 14);
+        }
+        grid[r][c] = { id: 'empty', symbol: '', color: 'transparent', score: 0, matchable: false };
+    }
+
+    async function processCascades(swapR1, swapC1, swapR2, swapC2) {
+        let cascadeDepth = 0;
+        let loopLimit = 0;
+
+        while (loopLimit < 20) {
+            loopLimit++;
+            let matches = findMatches();
+            let emptyExists = hasEmptyCells();
+
+            if (matches.length === 0 && !emptyExists) {
+                break;
+            }
+
+            if (matches.length > 0) {
+                cascadeDepth++;
+                audio.playMatch(cascadeDepth);
+
+                if (cascadeDepth > 1) {
+                    comboBadge.textContent = `⚡ COMBO x${cascadeDepth}`;
+                    comboBadge.classList.remove('hidden');
+                }
+
+                const matchedTiles = new Set();
+                let specialMatch = null;
+
+                for (let m of matches) {
+                    matchedTiles.add(`${m.r},${m.c}`);
+                    if (m.length >= 4 && !specialMatch) specialMatch = m;
+
+                    // Destroy adjacent Black Holes
+                    destroyAdjacentBlackHoles(m.r, m.c);
+
+                    const tile = grid[m.r][m.c];
+                    const points = Math.round((tile.score || 30) * Math.pow(1.5, cascadeDepth - 1));
+                    score += points;
+
+                    createExplosion(m.c * cellSize + cellSize / 2, m.r * cellSize + cellSize / 2, tile.color, 12);
+                }
+
+                let specialTileToSpawn = null;
+                let spawnR = null;
+                let spawnC = null;
+
+                if (specialMatch) {
+                    specialTileToSpawn = specialMatch.length >= 5 ? { ...CORE_TILE, turns: 0 } : { ...PULSAR_TILE, turns: 0 };
+                    if (swapR2 !== undefined && matchedTiles.has(`${swapR2},${swapC2}`)) {
+                        spawnR = swapR2; spawnC = swapC2;
+                    } else if (swapR1 !== undefined && matchedTiles.has(`${swapR1},${swapC1}`)) {
+                        spawnR = swapR1; spawnC = swapC1;
+                    } else {
+                        spawnR = specialMatch.r; spawnC = specialMatch.c;
+                    }
+                }
+
+                for (let key of matchedTiles) {
+                    const [r, c] = key.split(',').map(Number);
+                    if (specialTileToSpawn && r === spawnR && c === spawnC) {
+                        grid[r][c] = specialTileToSpawn;
+                    } else {
+                        grid[r][c] = { id: 'empty', symbol: '', color: 'transparent', score: 0, matchable: false };
+                    }
+                }
+
+                updateHUD();
+                await new Promise(res => setTimeout(res, 180));
+            }
+
+            // ALWAYS apply gravity if empty cells exist!
+            if (hasEmptyCells()) {
+                applyGravity();
+                updateHUD();
+                await new Promise(res => setTimeout(res, 180));
+            }
+        }
+
+        setTimeout(() => comboBadge.classList.add('hidden'), 1200);
+    }
+
+    function destroyAdjacentBlackHoles(r, c) {
+        const neighbors = [
+            { r: r - 1, c }, { r: r + 1, c },
+            { r, c: c - 1 }, { r, c: c + 1 }
+        ];
+
+        for (let n of neighbors) {
+            if (n.r >= 0 && n.r < GRID_SIZE && n.c >= 0 && n.c < GRID_SIZE) {
+                if (grid[n.r] && grid[n.r][n.c] && grid[n.r][n.c].id === 'blackhole') {
+                    destroyTileAt(n.r, n.c);
+                }
+            }
+        }
+    }
+
+    function getActiveBlackHoleCols() {
+        let cols = [];
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (grid[r] && grid[r][c] && grid[r][c].id === 'blackhole') {
+                    cols.push(c);
+                }
+            }
+        }
+        return cols;
+    }
+
+    function applyGravity() {
+        let spawnedNewBlackHole = false;
+
+        // Choose a column spaced away from existing Black Holes
+        const activeCols = getActiveBlackHoleCols();
+        let candidateCols = [0, 1, 2, 3, 4, 5].filter(c => !activeCols.includes(c) && !activeCols.includes(c - 1) && !activeCols.includes(c + 1));
+        if (candidateCols.length === 0) {
+            candidateCols = [0, 1, 2, 3, 4, 5].filter(c => !activeCols.includes(c));
+        }
+        if (candidateCols.length === 0) candidateCols = [0, 1, 2, 3, 4, 5];
+
+        const randomBHCol = candidateCols[Math.floor(Math.random() * candidateCols.length)];
+
+        for (let c = 0; c < GRID_SIZE; c++) {
+            let emptyCount = 0;
+            for (let r = GRID_SIZE - 1; r >= 0; r--) {
+                if (grid[r][c].id === 'empty') {
+                    emptyCount++;
+                } else if (emptyCount > 0) {
+                    grid[r + emptyCount][c] = grid[r][c];
+                    grid[r][c] = { id: 'empty', symbol: '', color: 'transparent', score: 0, matchable: false };
+                }
+            }
+
+            // Fill top empty cells with new tiles
+            for (let r = 0; r < emptyCount; r++) {
+                const activeBH = activeBlackHoleCount();
+                const movesUsed = DEFAULT_MOVES - movesLeft;
+
+                // Non-consecutive spawn check: movesSinceLastBHSpawn >= 2
+                if (!spawnedNewBlackHole && movesUsed >= 4 && movesSinceLastBHSpawn >= 2 && activeBH < MAX_ACTIVE_BLACK_HOLES && (activeBH + blackHolesDestroyed) < TARGET_BLACK_HOLES && c === randomBHCol && r === 0) {
+                    grid[r][c] = { ...BLACK_HOLE_TILE, turns: 0, animY: 0, animX: 0, scale: 1.0 };
+                    spawnedNewBlackHole = true;
+                    movesSinceLastBHSpawn = 0; // Reset turn cooldown!
+                    addFloatingText("🕳️ BLACK HOLE ENTERING REACTOR!", canvas.width / 2, 80, "#ff0054", 1.25);
+                } else {
+                    grid[r][c] = createRandomTile();
+                }
+            }
+        }
+    }
+
+    async function checkBlackHoleExpansion() {
+        let blackHoles = [];
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                if (grid[r] && grid[r][c] && grid[r][c].id === 'blackhole') {
+                    grid[r][c].turns = (grid[r][c].turns || 0) + 1;
+                    if (grid[r][c].turns >= 2) { // 2-turn expansion for higher difficulty!
+                        blackHoles.push({ r, c });
+                    }
+                }
+            }
+        }
+
+        // Expand Black Hole to an empty or normal adjacent cell with -50 Energy penalty!
+        for (let bh of blackHoles) {
+            grid[bh.r][bh.c].turns = 0; // reset turns
+            const neighbors = [
+                { r: bh.r - 1, c: bh.c }, { r: bh.r + 1, c: bh.c },
+                { r: bh.r, c: bh.c - 1 }, { r: bh.r, c: bh.c + 1 }
+            ].filter(n => n.r >= 0 && n.r < GRID_SIZE && n.c >= 0 && n.c < GRID_SIZE && grid[n.r][n.c].id !== 'blackhole');
+
+            if (neighbors.length > 0) {
+                const target = neighbors[Math.floor(Math.random() * neighbors.length)];
+                grid[target.r][target.c] = { ...BLACK_HOLE_TILE, turns: 0, animY: 0, animX: 0, scale: 1.0 };
+                audio.playTone(180, 'sawtooth', 0.2, 0.2, 90);
+
+                // Expansion Penalty: Deduct 50 Energy for tile consumption
+                score = Math.max(0, score - 50);
+                triggerScreenShake();
+                createExplosion(target.c * cellSize + cellSize / 2, target.r * cellSize + cellSize / 2, '#ff0054', 18);
+                addFloatingText("🚨 CONSUMED TILE! -50 PTS", target.c * cellSize + cellSize / 2, target.r * cellSize + cellSize / 2, "#ff0054", 1.25);
+            }
+        }
+    }
+
+    // --- Particle & Visual Effects ---
 
     function createExplosion(x, y, color, count = 16) {
         for (let i = 0; i < count; i++) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = 60 + Math.random() * 160;
+            const speed = 40 + Math.random() * 120;
             particles.push({
                 x, y,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 color,
-                radius: 2 + Math.random() * 4,
-                alpha: 1,
-                life: 0.35 + Math.random() * 0.35
+                radius: 2 + Math.random() * 3,
+                alpha: 1.0,
+                life: 0.3 + Math.random() * 0.3
             });
+        }
+        // Cap max active particles for smooth 60fps performance
+        if (particles.length > 100) {
+            particles = particles.slice(-100);
         }
     }
 
-    function addFloatingText(text, x, y, color, scale = 1.0) {
+    function addFloatingText(text, x, y, color = '#64ffda', scale = 1.0) {
         floatingTexts.push({
             text, x, y, color, scale,
-            alpha: 1,
-            life: 0.85
+            alpha: 1.0,
+            life: 0.8
         });
+        if (floatingTexts.length > 10) {
+            floatingTexts = floatingTexts.slice(-10);
+        }
+    }
+
+    function triggerScreenShake() {
+        canvasContainer.classList.remove('shake');
+        void canvasContainer.offsetWidth;
+        canvasContainer.classList.add('shake');
     }
 
     function updateHUD() {
+        movesValue.textContent = movesLeft;
         scoreValue.textContent = score;
-        timerValue.textContent = `${Math.ceil(timer)}s`;
-        
-        const fillPct = Math.min(100, Math.max(0, (score / currentConfig.target_score) * 100));
-        progressFill.style.width = `${fillPct}%`;
+        hazardValue.textContent = `${blackHolesDestroyed}/${TARGET_BLACK_HOLES} 🕳️`;
 
-        let hearts = '';
-        const lifeIcon = currentConfig.life_icon || '❤️';
-        for (let i = 0; i < currentConfig.starting_lives; i++) {
-            hearts += i < lives ? lifeIcon : '🖤';
-        }
-        livesValue.textContent = hearts;
-
-        const isCritical = (lives === 1);
-        canvas.classList.toggle('critical-danger-pulse', isCritical);
-        livesValue.classList.toggle('critical-lives-pulse', isCritical);
-
-        const newFeverState = (comboStreak >= 5 || score >= 25);
-        if (newFeverState && !isFeverMode) {
-            audio.playFeverSound();
-            addFloatingText("⚡ FEVER TIME (2x POINTS!)", canvas.width / 2, 80, "#ffd166", 1.4);
-        }
-        isFeverMode = newFeverState;
-        feverBadge.classList.toggle('hidden', !isFeverMode);
-
-        const comboMult = Math.min(5, 1 + Math.floor(comboStreak / 3));
-        comboBadge.textContent = `🔥 x${comboMult}`;
-
-        overloadBadge.classList.toggle('hidden', overloadTimer <= 0);
-        magnetTag.classList.toggle('hidden', powerupState.magnetTimer <= 0);
-        chronoTag.classList.toggle('hidden', powerupState.chronoTimer <= 0);
-        shieldTag.classList.toggle('hidden', !powerupState.hasShield);
-    }
-
-    function resetGame() {
-        score = 0;
-        lives = currentConfig.starting_lives;
-        timer = currentConfig.session_seconds;
-        comboStreak = 0;
-        maxComboStreak = 0;
-        badItemStreak = 0;
-        overloadTimer = 0;
-        isFeverMode = false;
-        isSurgeActive = false;
-
-        powerupState.magnetTimer = 0;
-        powerupState.chronoTimer = 0;
-        powerupState.hasShield = false;
-
-        items = [];
-        particles = [];
-        thrusterParticles = [];
-        floatingTexts = [];
-
-        paddle.x = canvas.width / 2;
-        paddle.targetX = canvas.width / 2;
-        paddle.width = PADDLE_WIDTH;
-
-        gameState = 'PLAYING';
-        updateHUD();
-        homeOverlay.classList.add('hidden');
-        pauseOverlay.classList.add('hidden');
-        endOverlay.classList.add('hidden');
-        startOverlay.classList.add('hidden');
-
-        lastTime = performance.now();
-        requestAnimationFrame(gameLoop);
-    }
-
-    function triggerGameOver(isWin) {
-        gameState = isWin ? 'VICTORY' : 'GAMEOVER';
-
-        if (isWin && lives === currentConfig.starting_lives) {
-            score += 20;
-        }
-
+        // Update High Score Display
         if (score > bestScore) {
             bestScore = score;
-            localStorage.setItem('stardust_best_score', bestScore.toString());
+            localStorage.setItem('stardust_reactor_best_score', bestScore.toString());
+        }
+        if (bestScoreValue) bestScoreValue.textContent = bestScore;
+    }
+
+    function checkGameEndState() {
+        const isGoalMet = (blackHolesDestroyed >= TARGET_BLACK_HOLES && score >= TARGET_SCORE);
+        if (isGoalMet || movesLeft <= 0) {
+            triggerGameOver();
+        }
+    }
+
+    function triggerGameOver() {
+        // Star Rating Criteria requested by user:
+        // Below 1200 Energy -> 1 Star (if score >= 400 or contained 1 BH)
+        // Reached 1200 Energy -> 2 Stars
+        // Beyond 1200 Energy (>= 1500) -> 3 Stars
+        // No stars = Game Over (score < 400 and 0 BH)
+
+        let stars = 0;
+
+        if (score >= 1500 && blackHolesDestroyed >= 1) {
+            stars = 3; // Beyond 1200 Energy
+        } else if (score >= TARGET_SCORE) {
+            stars = 2; // 1200 Energy Target
+        } else if (score >= 400 || blackHolesDestroyed >= 1) {
+            stars = 1; // Anything below 1200 Energy
+        } else {
+            stars = 0; // No stars = Game Over
         }
 
-        // Calculate Star Rating using Named Threshold Constants
-        let starsCount = 0;
-        if (score >= currentConfig.target_score) starsCount = 1;
-        if (score >= TWO_STAR_SCORE_THRESHOLD) starsCount = 2;
-        if (score >= THREE_STAR_SCORE_THRESHOLD) starsCount = 3;
+        gameState = stars > 0 ? 'VICTORY' : 'GAMEOVER';
 
-        star1.classList.toggle('active', starsCount >= 1);
-        star2.classList.toggle('active', starsCount >= 2);
-        star3.classList.toggle('active', starsCount >= 3);
+        star1.classList.toggle('active', stars >= 1);
+        star2.classList.toggle('active', stars >= 2);
+        star3.classList.toggle('active', stars >= 3);
 
-        canvas.classList.remove('critical-danger-pulse');
-        livesValue.classList.remove('critical-lives-pulse');
-
-        const resultBadge = document.getElementById('resultBadge');
-        if (isWin) {
-            let victoryText = currentConfig.messages.win.replace('{score}', score);
-            if (lives === currentConfig.starting_lives) {
-                victoryText += " ✨ FLAWLESS BONUS (+20 PTS)!";
-            }
-            resultBadge.textContent = "LEVEL COMPLETE";
-            resultBadge.style.borderColor = "var(--accent-teal)";
-            resultBadge.style.color = "var(--accent-teal)";
-            resultTitle.textContent = "VICTORY! 🎉";
-            resultMsg.textContent = victoryText;
-            audio.playVictory();
-        } else {
-            resultBadge.textContent = "TRY AGAIN";
+        if (stars === 0) {
+            resultBadge.textContent = "REACTOR OVERLOAD";
             resultBadge.style.borderColor = "var(--accent-red)";
             resultBadge.style.color = "var(--accent-red)";
             resultTitle.textContent = "GAME OVER";
-            resultMsg.textContent = currentConfig.messages.lose.replace('{score}', score);
+            resultMsg.textContent = `Out of moves! You collected ${score} Energy (0 Stars). Try again!`;
             audio.playGameOver();
+        } else if (stars === 1) {
+            resultBadge.textContent = "STAGE COMPLETED";
+            resultBadge.style.borderColor = "var(--accent-gold)";
+            resultBadge.style.color = "var(--accent-gold)";
+            resultTitle.textContent = "1-STAR PASS! ⭐";
+            resultMsg.textContent = `Good start! You collected ${score} Energy (Below 1200). Reach 1200 Energy for 2 Stars!`;
+            audio.playVictory();
+        } else if (stars === 2) {
+            resultBadge.textContent = "REACTOR STABILIZED";
+            resultBadge.style.borderColor = "var(--accent-teal)";
+            resultBadge.style.color = "var(--accent-teal)";
+            resultTitle.textContent = "2-STAR VICTORY! ⭐⭐";
+            resultMsg.textContent = `Great run! You reached ${score} Energy (1200 Target achieved!). Push past 1500 for 3 Stars!`;
+            audio.playVictory();
+        } else {
+            resultBadge.textContent = "FLAWLESS CORE";
+            resultBadge.style.borderColor = "var(--accent-gold)";
+            resultBadge.style.color = "var(--accent-gold)";
+            resultTitle.textContent = "3-STAR MASTER! ⭐⭐⭐";
+            resultMsg.textContent = `Flawless execution! You went beyond 1200 Energy (${score} pts) and contained Black Hole anomalies!`;
+            audio.playVictory();
         }
 
         finalScore.textContent = score;
-        maxComboDisplay.textContent = `x${Math.min(5, 1 + Math.floor(maxComboStreak / 3))}`;
-        bestScoreDisplay.textContent = bestScore;
+        finalMoves.textContent = movesLeft;
+        finalHazards.textContent = blackHolesDestroyed;
 
         endOverlay.classList.remove('hidden');
     }
 
-    function update(dt) {
-        if (gameState !== 'PLAYING') return;
+    function resetGame() {
+        movesLeft = DEFAULT_MOVES;
+        score = 0;
+        blackHolesDestroyed = 0;
+        selectedCell = null;
+        isAnimating = false;
+        gameState = 'PLAYING';
+        particles = [];
+        laserLines = [];
+        floatingTexts = [];
 
-        const prevTimer = Math.ceil(timer);
-        timer -= dt;
-        const curTimer = Math.ceil(timer);
-
-        if ((prevTimer > 30 && curTimer <= 30) || (prevTimer > 15 && curTimer <= 15)) {
-            triggerSurgeWarning();
-        }
-
-        if (timer <= 0) {
-            timer = 0;
-            updateHUD();
-            triggerGameOver(score >= currentConfig.target_score);
-            return;
-        }
-
-        if (powerupState.magnetTimer > 0) powerupState.magnetTimer -= dt;
-        if (powerupState.chronoTimer > 0) powerupState.chronoTimer -= dt;
-        if (overloadTimer > 0) overloadTimer -= dt;
-
-        paddle.width = overloadTimer > 0 ? PADDLE_WIDTH * 0.7 : PADDLE_WIDTH;
-
+        initBoard();
         updateHUD();
 
-        if (keys['ArrowLeft'] || keys['KeyA']) paddle.targetX -= paddle.speed * dt;
-        if (keys['ArrowRight'] || keys['KeyD']) paddle.targetX += paddle.speed * dt;
+        endOverlay.classList.add('hidden');
+        infoOverlay.classList.add('hidden');
+    }
 
-        paddle.targetX = Math.max(paddle.width / 2, Math.min(canvas.width - paddle.width / 2, paddle.targetX));
+    // --- Input Gesture Handlers (Desktop Mouse & Mobile Touch) ---
 
-        const dx = paddle.targetX - paddle.x;
-        paddle.tilt = dx * 0.08;
-        paddle.x += dx * 0.25;
+    function getCanvasCoords(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    }
 
-        if (themeBgLayer) {
-            const shiftX = (paddle.x - canvas.width / 2) * -0.05;
-            themeBgLayer.style.transform = `translateX(${shiftX}px)`;
+    canvas.addEventListener('click', (e) => {
+        const coords = getCanvasCoords(e.clientX, e.clientY);
+        const c = Math.floor(coords.x / cellSize);
+        const r = Math.floor(coords.y / cellSize);
+
+        if (r >= 0 && r < GRID_SIZE && c >= 0 && c < GRID_SIZE) {
+            handleCellClick(r, c);
         }
+    });
 
-        paddle.scaleY += (1.0 - paddle.scaleY) * 0.15;
-
-        if (Math.random() < 0.8) {
-            thrusterParticles.push({
-                x: paddle.x + (Math.random() * 20 - 10),
-                y: paddle.y + paddle.height / 2,
-                vx: -paddle.tilt * 0.5 + (Math.random() * 20 - 10),
-                vy: 60 + Math.random() * 80,
-                color: activeThemeKey === 'candy' ? '#ff70a6' : '#64ffda',
-                radius: 2 + Math.random() * 3,
-                alpha: 1,
-                life: 0.3
-            });
+    // Touch Swipe Gesture Support for Mobile
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 0) {
+            const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
+            touchStartPos = coords;
         }
+    }, { passive: true });
 
-        const elapsed = currentConfig.session_seconds - timer;
-        const diff = getDifficultyMultiplier(elapsed);
+    canvas.addEventListener('touchend', (e) => {
+        if (!touchStartPos || e.changedTouches.length === 0) return;
 
-        spawnTimer += dt;
-        const speedScale = powerupState.chronoTimer > 0 ? 0.5 : (isSurgeActive ? 1.8 : 1.0);
-        const currentSpawnInterval = (0.9 / diff.spawn_rate_multiplier) / (isSurgeActive ? 2.5 : 1.0);
+        const coords = getCanvasCoords(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        const dx = coords.x - touchStartPos.x;
+        const dy = coords.y - touchStartPos.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (spawnTimer >= currentSpawnInterval) {
-            spawnTimer = 0;
-            items.push(getRandomItem(elapsed));
-        }
+        const startC = Math.floor(touchStartPos.x / cellSize);
+        const startR = Math.floor(touchStartPos.y / cellSize);
 
-        for (let i = items.length - 1; i >= 0; i--) {
-            const item = items[i];
+        if (dist > 25) {
+            // Swipe gesture detected
+            let targetR = startR;
+            let targetC = startC;
 
-            if (powerupState.magnetTimer > 0 && (item.isGood || item.isPowerup)) {
-                const magDx = paddle.x - item.x;
-                item.x += magDx * 4.5 * dt;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                targetC += dx > 0 ? 1 : -1;
+            } else {
+                targetR += dy > 0 ? 1 : -1;
             }
 
-            item.y += item.velocityY * diff.fall_speed_multiplier * speedScale * dt;
-
-            const paddleTop = paddle.y - paddle.height / 2;
-            const paddleBottom = paddle.y + paddle.height / 2;
-            const paddleLeft = paddle.x - paddle.width / 2;
-            const paddleRight = paddle.x + paddle.width / 2;
-
-            if (
-                item.y + item.size / 2 >= paddleTop &&
-                item.y - item.size / 2 <= paddleBottom &&
-                item.x + item.size / 2 >= paddleLeft &&
-                item.x - item.size / 2 <= paddleRight
-            ) {
-                paddle.scaleY = 0.75;
-
-                if (item.isPowerup) {
-                    audio.playPowerup();
-                    if (item.type === 'magnet') {
-                        powerupState.magnetTimer = 6;
-                        addFloatingText("🧲 MAGNET ACTIVE!", item.x, item.y, "#ff0054", 1.2);
-                    } else if (item.type === 'chrono') {
-                        powerupState.chronoTimer = 6;
-                        addFloatingText("⏳ SUGAR SLOW-MO!", item.x, item.y, "#00f5d4", 1.2);
-                    } else if (item.type === 'shield') {
-                        powerupState.hasShield = true;
-                        addFloatingText("🛡️ SHIELD ACTIVE!", item.x, item.y, "#70d6ff", 1.2);
-                    } else if (item.type === 'heal') {
-                        if (lives < currentConfig.starting_lives) {
-                            lives++;
-                            addFloatingText(`+1 REPAIR (${currentConfig.life_icon || '❤️'})`, item.x, item.y, "#ff4d6d", 1.35);
-                            createExplosion(item.x, item.y, "#ff4d6d", 22);
-                        } else {
-                            score += 10;
-                            addFloatingText("MAX LIFE! +10 PTS", item.x, item.y, "#ffd166", 1.2);
-                            createExplosion(item.x, item.y, "#ffd166", 16);
-                        }
-                    } else if (item.type === 'mystery') {
-                        if (Math.random() < MYSTERY_JACKPOT_CHANCE) {
-                            score += MYSTERY_JACKPOT_POINTS;
-                            audio.playPowerup();
-                            addFloatingText(`❓ MYSTERY JACKPOT! +${MYSTERY_JACKPOT_POINTS}`, item.x, item.y, "#ffd166", 1.35);
-                            createExplosion(item.x, item.y, "#ffd166", 24);
-                        } else {
-                            audio.playHit();
-                            triggerScreenShake();
-                            addFloatingText("❓ MYSTERY BOMB! -1 LIFE", item.x, item.y, "#ef476f", 1.35);
-                            createExplosion(item.x, item.y, "#ef476f", 24);
-                            lives--;
-                            if (lives <= 0) {
-                                lives = 0;
-                                updateHUD();
-                                items.splice(i, 1);
-                                triggerGameOver(false);
-                                return;
-                            }
-                        }
-                    }
-                    items.splice(i, 1);
-                    continue;
-                }
-
-                if (item.isGood) {
-                    badItemStreak = 0;
-                    comboStreak++;
-                    if (comboStreak > maxComboStreak) maxComboStreak = comboStreak;
-
-                    const comboMult = Math.min(5, 1 + Math.floor(comboStreak / 3));
-                    const feverMult = isFeverMode ? 2 : 1;
-                    const pointsGained = item.points * comboMult * feverMult;
-                    score += pointsGained;
-
-                    audio.playCatch(comboStreak);
-                    triggerHaptic(20);
-
-                    if (comboMult > 1 || isFeverMode) {
-                        addFloatingText(`+${pointsGained} (COMBO x${comboMult}${isFeverMode ? ' ⚡FEVER' : ''})`, item.x, item.y, item.color, 1.2);
-                    } else {
-                        addFloatingText(`+${pointsGained}`, item.x, item.y, item.color);
-                    }
-                    createExplosion(item.x, item.y, item.color, 16);
-                } else {
-                    comboStreak = 0;
-                    badItemStreak++;
-
-                    if (powerupState.hasShield) {
-                        powerupState.hasShield = false;
-                        audio.playShieldAbsorb();
-                        addFloatingText("🛡️ SHIELD ABSORBED HIT!", item.x, item.y, "#74c69d", 1.1);
-                        createExplosion(item.x, item.y, "#74c69d", 18);
-                        items.splice(i, 1);
-                        continue;
-                    }
-
-                    audio.playHit();
-                    triggerScreenShake();
-                    addFloatingText(`${item.points}`, item.x, item.y, '#ef476f');
-                    createExplosion(item.x, item.y, '#ef476f', 18);
-
-                    score = Math.max(0, score + item.points);
-
-                    if (badItemStreak >= 3) {
-                        badItemStreak = 0;
-                        overloadTimer = 5.0;
-                        const backlashPenalty = 10;
-                        score = Math.max(0, score - backlashPenalty);
-                        triggerScreenShake();
-                        addFloatingText(`🚨 HAZARD OVERLOAD! -${backlashPenalty} PTS & SHRUNK!`, item.x, item.y, "#ff0054", 1.45);
-                        createExplosion(item.x, item.y, "#ff0054", 28);
-                    }
-
-                    if (item.deduct_life) {
-                        lives--;
-                        if (lives <= 0) {
-                            lives = 0;
-                            updateHUD();
-                            items.splice(i, 1);
-                            triggerGameOver(false);
-                            return;
-                        }
-                    }
-                }
-
-                if (score >= THREE_STAR_SCORE_THRESHOLD && lives > 0) {
-                    items.splice(i, 1);
-                    triggerGameOver(true);
-                    return;
-                }
-
-                items.splice(i, 1);
-                continue;
+            if (startR >= 0 && startR < GRID_SIZE && startC >= 0 && startC < GRID_SIZE &&
+                targetR >= 0 && targetR < GRID_SIZE && targetC >= 0 && targetC < GRID_SIZE) {
+                selectedCell = null;
+                attemptSwap(startR, startC, targetR, targetC);
             }
-
-            if (item.y > canvas.height + 40) {
-                if (item.isGood) comboStreak = 0;
-                items.splice(i, 1);
+        } else {
+            // Tap detected
+            if (startR >= 0 && startR < GRID_SIZE && startC >= 0 && startC < GRID_SIZE) {
+                handleCellClick(startR, startC);
             }
         }
 
-        for (let i = thrusterParticles.length - 1; i >= 0; i--) {
-            const tp = thrusterParticles[i];
-            tp.x += tp.vx * dt;
-            tp.y += tp.vy * dt;
-            tp.alpha -= dt / tp.life;
-            if (tp.alpha <= 0) thrusterParticles.splice(i, 1);
+        touchStartPos = null;
+    });
+
+    // --- Render Engine ---
+
+    function render(dt) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Grid Lines & Board Cells
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                const x = c * cellSize;
+                const y = r * cellSize;
+
+                // Bright Checkerboard Cells
+                ctx.fillStyle = (r + c) % 2 === 0 ? 'rgba(255, 255, 255, 0.08)' : 'rgba(100, 255, 218, 0.05)';
+                ctx.fillRect(x, y, cellSize, cellSize);
+
+                ctx.strokeStyle = 'rgba(100, 255, 218, 0.35)';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(x, y, cellSize, cellSize);
+
+                // Highlight Selected Cell with Bright Neon Glow
+                if (selectedCell && selectedCell.r === r && selectedCell.c === c) {
+                    ctx.fillStyle = 'rgba(100, 255, 218, 0.45)';
+                    ctx.fillRect(x, y, cellSize, cellSize);
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.shadowColor = '#64ffda';
+                    ctx.shadowBlur = 15;
+                    ctx.lineWidth = 3.5;
+                    ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+                }
+
+                // Render Tile Emoji & Vibrant Tile Backing Pill
+                const tile = grid[r][c];
+                if (tile && tile.id !== 'empty') {
+                    ctx.save();
+                    const pad = 6;
+                    const tileW = cellSize - pad * 2;
+                    const tileH = cellSize - pad * 2;
+
+                    // Draw Bright Tile Backing Container
+                    ctx.fillStyle = 'rgba(18, 26, 52, 0.85)';
+                    ctx.strokeStyle = tile.color;
+                    ctx.lineWidth = 2.5;
+                    ctx.shadowColor = tile.color;
+                    ctx.shadowBlur = tile.id === 'blackhole' ? 22 : 14;
+
+                    ctx.beginPath();
+                    ctx.roundRect(x + pad, y + pad, tileW, tileH, 12);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Render Symbol Inside Pill
+                    ctx.translate(x + cellSize / 2, y + cellSize / 2);
+                    ctx.font = `${Math.floor(cellSize * 0.54)}px "Segoe UI Emoji", "Apple Color Emoji", Orbitron, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(tile.symbol, 0, 0);
+
+                    // If Black Hole, render expansion timer badge
+                    if (tile.id === 'blackhole' && tile.turns > 0) {
+                        ctx.font = '800 13px Orbitron, sans-serif';
+                        ctx.fillStyle = '#ff0054';
+                        ctx.shadowColor = '#ff0054';
+                        ctx.shadowBlur = 10;
+                        ctx.fillText(`⏳${3 - tile.turns}`, cellSize * 0.28, -cellSize * 0.28);
+                    }
+
+                    ctx.restore();
+                }
+            }
         }
 
+        // Draw Laser Lines (Pulsar triggers)
+        for (let i = laserLines.length - 1; i >= 0; i--) {
+            const line = laserLines[i];
+            ctx.save();
+            ctx.globalAlpha = line.alpha;
+            ctx.fillStyle = '#00b4d8';
+            ctx.shadowColor = '#00b4d8';
+            ctx.shadowBlur = 20;
+
+            if (line.type === 'row') {
+                ctx.fillRect(0, line.r * cellSize + cellSize / 4, canvas.width, cellSize / 2);
+            } else {
+                ctx.fillRect(line.c * cellSize + cellSize / 4, 0, cellSize / 2, canvas.height);
+            }
+            ctx.restore();
+
+            line.alpha -= dt * 3;
+            if (line.alpha <= 0) laserLines.splice(i, 1);
+        }
+
+        // Render Particles
         for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
             p.x += p.vx * dt;
             p.y += p.vy * dt;
             p.alpha -= dt / p.life;
-            if (p.alpha <= 0) particles.splice(i, 1);
-        }
 
-        for (let i = floatingTexts.length - 1; i >= 0; i--) {
-            const ft = floatingTexts[i];
-            ft.y -= 45 * dt;
-            ft.alpha -= dt / ft.life;
-            if (ft.alpha <= 0) floatingTexts.splice(i, 1);
-        }
-    }
+            if (p.alpha <= 0) {
+                particles.splice(i, 1);
+                continue;
+            }
 
-    function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (powerupState.chronoTimer > 0) {
-            ctx.strokeStyle = 'rgba(0, 245, 212, 0.14)';
-            ctx.lineWidth = 2;
-        } else {
-            ctx.strokeStyle = 'rgba(100, 255, 218, 0.05)';
-            ctx.lineWidth = 1;
-        }
-
-        for (let x = 0; x < canvas.width; x += 40) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvas.height);
-            ctx.stroke();
-        }
-
-        for (let tp of thrusterParticles) {
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, tp.alpha);
-            ctx.fillStyle = tp.color;
-            ctx.shadowColor = tp.color;
-            ctx.shadowBlur = 6;
-            ctx.beginPath();
-            ctx.arc(tp.x, tp.y, tp.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        const px = paddle.x;
-        const py = paddle.y;
-        const pw = paddle.width;
-        const ph = paddle.height * paddle.scaleY;
-
-        ctx.save();
-        ctx.translate(px, py);
-        ctx.rotate((paddle.tilt * Math.PI) / 180);
-
-        if (powerupState.hasShield) {
-            ctx.strokeStyle = activeThemeKey === 'candy' ? '#ff70a6' : '#52b788';
-            ctx.shadowColor = activeThemeKey === 'candy' ? '#ff70a6' : '#52b788';
-            ctx.shadowBlur = 18;
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(0, 0, pw * 0.65, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
-        ctx.shadowColor = activeThemeKey === 'candy' ? '#ff70a6' : '#64ffda';
-        ctx.shadowBlur = 14;
-
-        const vesselGrad = ctx.createLinearGradient(-pw / 2, 0, pw / 2, 0);
-        if (activeThemeKey === 'candy') {
-            vesselGrad.addColorStop(0, '#ff70a6');
-            vesselGrad.addColorStop(0.5, '#ffd166');
-            vesselGrad.addColorStop(1, '#ff70a6');
-        } else {
-            vesselGrad.addColorStop(0, '#00b4d8');
-            vesselGrad.addColorStop(0.5, '#64ffda');
-            vesselGrad.addColorStop(1, '#00b4d8');
-        }
-
-        ctx.fillStyle = vesselGrad;
-        ctx.beginPath();
-        ctx.roundRect(-pw / 2, -ph / 2, pw, ph, [12, 12, 4, 4]);
-        ctx.fill();
-        ctx.strokeStyle = overloadTimer > 0 ? '#ef476f' : '#ffffff';
-        ctx.lineWidth = overloadTimer > 0 ? 3 : 1.5;
-        ctx.stroke();
-
-        if (overloadTimer > 0) {
-            ctx.strokeStyle = '#ef476f';
-            ctx.shadowColor = '#ef476f';
-            ctx.shadowBlur = 20;
-            ctx.lineWidth = 2;
-            ctx.strokeRect(-pw / 2 - 4, -ph / 2 - 4, pw + 8, ph + 8);
-        }
-
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(-pw / 3, -ph / 4, pw * 0.66, 3);
-
-        ctx.restore();
-
-        ctx.font = '28px serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        for (let item of items) {
-            ctx.save();
-            const depthScale = 0.85 + (item.y / canvas.height) * 0.25;
-            ctx.translate(item.x, item.y);
-            ctx.scale(depthScale, depthScale);
-
-            ctx.shadowColor = item.color;
-            ctx.shadowBlur = item.isPowerup ? 18 : 10;
-            ctx.fillText(item.emoji, 0, 0);
-            ctx.restore();
-        }
-
-        for (let p of particles) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, p.alpha);
             ctx.fillStyle = p.color;
@@ -1024,30 +891,52 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         }
 
-        for (let ft of floatingTexts) {
+        // Render Floating Texts
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            const ft = floatingTexts[i];
+            ft.y -= 35 * dt;
+            ft.alpha -= dt / ft.life;
+
+            if (ft.alpha <= 0) {
+                floatingTexts.splice(i, 1);
+                continue;
+            }
+
             ctx.save();
             ctx.globalAlpha = Math.max(0, ft.alpha);
-            ctx.font = `700 ${Math.floor(20 * ft.scale)}px Orbitron, sans-serif`;
+            ctx.font = `800 ${Math.floor(18 * ft.scale)}px Orbitron, sans-serif`;
             ctx.fillStyle = ft.color;
             ctx.shadowColor = ft.color;
             ctx.shadowBlur = 10;
+            ctx.textAlign = 'center';
             ctx.fillText(ft.text, ft.x, ft.y);
             ctx.restore();
         }
     }
 
-    function gameLoop(timestamp) {
-        const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
-        lastTime = timestamp;
+    let lastTimestamp = performance.now();
+    function mainLoop(timestamp) {
+        const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+        lastTimestamp = timestamp;
 
-        update(dt);
-        render();
-
-        if (gameState === 'PLAYING') requestAnimationFrame(gameLoop);
+        render(dt);
+        requestAnimationFrame(mainLoop);
     }
 
-    startBtn.addEventListener('click', () => { audio.init(); resetGame(); });
-    restartBtn.addEventListener('click', () => { audio.init(); resetGame(); });
+    // --- Event Listeners ---
+    restartHeaderBtn.addEventListener('click', () => { audio.init(); resetGame(); });
+    restartOverlayBtn.addEventListener('click', () => { audio.init(); resetGame(); });
 
-    updateThemeUI();
+    soundToggle.addEventListener('click', () => {
+        const isMuted = audio.toggleMute();
+        soundIcon.textContent = isMuted ? '🔇' : '🔊';
+    });
+
+    infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
+    closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
+
+    // Initialize Game
+    initBoard();
+    updateHUD();
+    requestAnimationFrame(mainLoop);
 });

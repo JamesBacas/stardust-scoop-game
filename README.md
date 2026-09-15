@@ -1,6 +1,6 @@
-# ✨ Stardust Scoop — Skill-Driven Web Game 🚀
+# ⚡ Stardust Reactor — Skill-Driven Spatial Logic Web Game 🚀
 
-> A fast-paced arcade catch game built using an **AI Agent Skill** workflow.
+> A compact, logic-focused browser puzzle game built using an **AI Agent Skill** workflow following the [agentskills.io](https://agentskills.io/) specification.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![HTML5 Canvas](https://img.shields.io/badge/HTML5-Canvas-orange.svg)
@@ -11,91 +11,71 @@
 
 ## 🎯 Game Objective & Mechanics
 
-Steer your cosmic catcher vessel left and right across space to collect valuable stardust and celestial fragments while dodging dangerous space debris!
+Manage energy alignment on a 6x6 cosmic grid in **Stardust Reactor**!
 
-- **Objective**: Collect **50 points** of cosmic energy before the **60-second timer** expires.
-- **Lives System**: You start with **3 Lives** (❤️❤️❤️). Hitting a Black Hole deducts 10 points and 1 life.
-- **Dynamic Difficulty**: As time progresses, item fall speeds increase and rare items begin spawning.
-
-### 🎮 Controls
-- **Desktop (Mouse)**: Move your mouse across the canvas to steer your ship.
-- **Desktop (Keyboard)**: Press `← / A` to move left and `→ / D` to move right.
-- **Mobile / Touch**: Touch and drag anywhere on the screen to position your vessel.
-
-### 📦 Item Legend & Points
-| Item | Emoji | Points | Rarity | Effect |
-| :--- | :---: | :---: | :--- | :--- |
-| **Stardust** | ✨ | +1 | Common | Standard cosmic score |
-| **Comet Fragment** | ☄️ | +3 | Common | Faster celestial chunk |
-| **Power Crystal** | 💎 | +5 | Uncommon | High value energy gem |
-| **Satellite Part** | 🛰️ | +5 | Uncommon | Tech salvage |
-| **Golden Nova** | 🌟 | +15 | Rare | Jackpot bonus |
-| **Space Junk** | 🗑️ | -1 | Common | Debris penalty |
-| **Asteroid** | 🪨 | -3 | Common | Rock collision |
-| **Meteor** | 🔥 | -5 | Uncommon | Fire hazard |
-| **Black Hole** | 🕳️ | -10 | Rare | **Deducts 1 Life (❤️)** |
+- **Objective**: Contain **3 Black Holes 🕳️** and reach **1,200 Energy** within a **16-Move Limit**.
+- **Match 3+ Tiles**: Align 3 identical tiles (✨ Stardust, 💎 Power Crystal, 🌟 Golden Nova) to harvest energy.
+- **Special Combos**:
+  - **Match 4 (Line Pulsar ⚡)**: Creates a Pulsar tile that vaporizes its entire row & column when cleared!
+  - **Match 5 (Quantum Core 🌌)**: Creates a Core tile that obliterates all tiles matching the target element.
+- **Black Hole Hazard 🕳️**:
+  - Drops into orbit starting after **Move 4** (gives you time to learn & build combos first!).
+  - Spawns in **spaced-out columns** away from active Black Holes.
+  - Expand after **2 turns** of neglect, consuming adjacent tiles and deducting a **50 Energy Penalty**!
+- **Star Rating Criteria**:
+  - ⭐ **1 Star**: Finished stage below 1,200 Energy.
+  - ⭐⭐ **2 Stars**: Reached 1,200 Target Energy.
+  - ⭐⭐⭐ **3 Stars**: Went beyond 1,200 Energy (1,500+ pts)!
+  - 🚫 **0 Stars**: Game Over (Reactor Overload).
+- **Persistent High Score (`BEST`)**: Saves your personal record locally in `localStorage`.
 
 ---
 
-## 🤖 2. The Agent Skill Workflow
+## 🎮 Controls
 
-Per **Part 2** of the assignment requirements, this game's content, point distribution, difficulty curve, and flavor copy were generated using a custom **Agent Skill**.
-
-### What is an Agent Skill?
-An Agent Skill is a structured instruction package (located in `.agents/skills/`) that teaches an AI model how to generate consistent, high-quality, domain-specific content every time.
-
-- **Skill Definition (agentskills.io Spec)**: [skills/game-content-generator/SKILL.md](skills/game-content-generator/SKILL.md)
-- **Reference Templates**: [skills/game-content-generator/references/TEMPLATES.md](skills/game-content-generator/references/TEMPLATES.md)
+- **Desktop (Mouse)**: Click a tile and click an adjacent cell (or click-and-drag) to swap.
+- **Mobile / Touch**: Tap a tile and tap an adjacent cell (or swipe in direction) to swap. Responsive 100dvh layout fits all phone screens.
 
 ---
 
-## 🚀 3. Features & Architecture
+## 🤖 The Agent Skill Workflow
 
-- **Zero External Dependencies**: Pure vanilla JavaScript (ES6+), HTML5 Canvas, and CSS3.
-- **Procedural Audio**: Custom retro sound effects generated programmatically via the native browser **Web Audio API** (catch tones, powerups, damage hits, victory fanfare, and game over sounds).
-- **Restart Mechanism**: Full zero-state reset routine triggered by the **"Launch Again"** button on the game over screen.
+This game's rules, grid layout, special tile behaviors, and objective constraints were generated using a custom **Agent Skill** adhering to the **[agentskills.io](https://agentskills.io/)** specification.
 
----
-
-## 🐛 Bug Fix & Playtesting Log
-
-- **Bug 1**: Scoring target cut off gameplay at 50 points, preventing players from accumulating enough points to achieve 2-star (80 pts) or 3-star (120 pts) ratings.
-- **Fix**: Updated game loop logic in `game.js` so reaching minimum target score allows gameplay to continue up to the timer expiration or 3-star threshold (120 pts), allowing players to achieve all star ratings.
-- **Bug 2**: Bad items displayed negative floating point values on collision but failed to deduct points from the player's score.
-- **Fix**:
-  ```javascript
-  score = Math.max(0, score + item.points);
-  ```
-- **Cleanup**: Removed the legacy Emerald Kingdom theme to streamline active arcade realms (Candy Crush, Stardust Scoop, Ocean Diver).
+- **Skill Definition (`agentskills.io` Spec)**: [.agents/skills/game-logic-designer/SKILL.md](.agents/skills/game-logic-designer/SKILL.md)
+- **Reference Template JSON**: [.agents/skills/game-logic-designer/examples/reactor_quest.json](.agents/skills/game-logic-designer/examples/reactor_quest.json)
 
 ---
 
-## 📦 4. Git Upload & Deployment Guide
+## 🚀 Features & Architecture
 
-### Step 1: Initialize Git Repository
-In your terminal, navigate to this folder and run:
+- **Zero External Dependencies**: Pure vanilla ES6+ JavaScript, HTML5 Canvas, and CSS3.
+- **Procedural Synthesizer**: Web Audio API retro sound synthesis for tile selection, swaps, invalid spring-backs, laser blasts, black hole explosions, cascade combos, victory fanfares, and game over signals.
+- **Restart Routine**: Instant state reset via header button or end overlay button.
 
-```bash
-git init
-git add .
-git commit -m "Initial commit: Stardust Scoop - Skill-driven Arcade Game"
-```
+---
 
-### Step 2: Push to GitHub
-1. Create a new public repository on [GitHub](https://github.com/new) named `stardust-scoop`.
-2. Connect your local repository and push:
+## 📱 GitHub Pages Deployment (Play on Phone!)
 
-```bash
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/stardust-scoop.git
-git branch -M main
-git push -u origin main
-```
+To publish this game to GitHub and play it live on your mobile phone:
 
-### Step 3: Deploy to Cadeplay / GitHub Pages
-- **GitHub Pages**: Go to **Repository Settings -> Pages**, select `main` branch root (`/`), and click **Save**.
-- **Cadeplay**: Upload your GitHub repository link or deploy directly on [Cadeplay](https://cadeplay.com) by pointing to `index.html`.
+1. **Commit & Push to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Updated Stardust Reactor with High Score, Star Ratings & Agent Skill"
+   git push origin main
+   ```
+
+2. **Enable GitHub Pages**:
+   - Go to your repository settings on GitHub: **Settings -> Pages**.
+   - Under **Build and deployment**, set Source to **Deploy from a branch**.
+   - Select Branch: `main` and Folder: `/ (root)`, then click **Save**.
+
+3. **Play on Mobile**:
+   - Open your GitHub Pages link (e.g. `https://<your-username>.github.io/<repository-name>/`) in Safari or Chrome on your phone!
+   - Tap **"Add to Home Screen"** to play anytime full-screen!
 
 ---
 
 ## 📄 License
-MIT License - Created for Portfolio & CS Demonstration.
+MIT License - Created for Portfolio & AI Agent Skill Demonstration.

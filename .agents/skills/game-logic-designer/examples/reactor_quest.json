@@ -1,0 +1,65 @@
+{
+  "game_title": "Stardust Reactor Logic Grid",
+  "board_size": { "rows": 6, "cols": 6 },
+  "max_moves": 20,
+  "target_score": 1200,
+  "objective": {
+    "type": "contain_hazards_and_score",
+    "target_black_holes_destroyed": 3,
+    "description": "Destroy 3 Black Holes & reach 1,200 Energy!"
+  },
+  "tile_catalog": [
+    {
+      "id": "stardust",
+      "name": "Stardust",
+      "symbol": "✨",
+      "color": "#64ffda",
+      "base_score": 30,
+      "matchable": true
+    },
+    {
+      "id": "crystal",
+      "name": "Power Crystal",
+      "symbol": "💎",
+      "color": "#bd5fff",
+      "base_score": 50,
+      "matchable": true
+    },
+    {
+      "id": "nova",
+      "name": "Golden Nova",
+      "symbol": "🌟",
+      "color": "#ffd166",
+      "base_score": 80,
+      "matchable": true
+    },
+    {
+      "id": "blackhole",
+      "name": "Black Hole",
+      "symbol": "🕳️",
+      "color": "#ff0054",
+      "base_score": 200,
+      "matchable": false,
+      "behavior": "expands_on_timer",
+      "turns_to_expand": 3
+    }
+  ],
+  "special_tile_rules": {
+    "match_4": {
+      "name": "Line Pulsar",
+      "symbol": "⚡",
+      "effect": "clears_row_and_column"
+    },
+    "match_5": {
+      "name": "Quantum Core",
+      "symbol": "🌌",
+      "effect": "clears_all_same_element"
+    }
+  },
+  "cascade_multiplier": 1.5,
+  "messages": {
+    "win": "Reactor Stabilized! Objective complete with {moves_left} moves remaining.",
+    "lose": "Reactor Overload! Out of moves.",
+    "restart_button": "Re-initialize Reactor"
+  }
+}
