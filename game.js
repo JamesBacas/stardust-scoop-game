@@ -130,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let grid = [];
     let movesLeft = DEFAULT_MOVES;
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('stardust_reactor_best_score') || '0', 10);
+    localStorage.removeItem('stardust_reactor_best_score');
+    let bestScore = 0; // High score resets on every page reload
     let blackHolesDestroyed = 0;
     let movesSinceLastBHSpawn = 2; // Non-consecutive turn cooldown
     let selectedCell = null; // { r, c }
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let laserLines = [];
     let floatingTexts = [];
     let touchStartPos = null;
+    let lastTouchTime = 0;
 
     if (bestScoreValue) bestScoreValue.textContent = bestScore;
 
@@ -617,10 +619,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreValue.textContent = score;
         hazardValue.textContent = `${blackHolesDestroyed}/${TARGET_BLACK_HOLES} 🕳️`;
 
-        // Update High Score Display
+        // Update High Score Display (Resets on every site reload)
         if (score > bestScore) {
             bestScore = score;
-            localStorage.setItem('stardust_reactor_best_score', bestScore.toString());
         }
         if (bestScoreValue) bestScoreValue.textContent = bestScore;
     }
@@ -725,6 +726,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     canvas.addEventListener('click', (e) => {
+        // Prevent synthetic ghost click fired by mobile browsers after touch events
+        if (Date.now() - lastTouchTime < 500) {
+            e.preventDefault();
+            return;
+        }
+
         const coords = getCanvasCoords(e.clientX, e.clientY);
         const c = Math.floor(coords.x / cellSize);
         const r = Math.floor(coords.y / cellSize);
@@ -734,15 +741,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Touch Swipe Gesture Support for Mobile
+    // Touch Swipe & Tap Gesture Support for Mobile
     canvas.addEventListener('touchstart', (e) => {
+        lastTouchTime = Date.now();
         if (e.touches && e.touches.length > 0) {
+            if (e.cancelable) e.preventDefault();
             const coords = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY);
             touchStartPos = coords;
         }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener('touchend', (e) => {
+        lastTouchTime = Date.now();
+        if (e.cancelable) e.preventDefault();
+
         if (!touchStartPos || e.changedTouches.length === 0) return;
 
         const coords = getCanvasCoords(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
@@ -777,7 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         touchStartPos = null;
-    });
+    }, { passive: false });
 
     // --- Render Engine ---
 
@@ -798,13 +810,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.lineWidth = 1.5;
                 ctx.strokeRect(x, y, cellSize, cellSize);
 
-                // Highlight Selected Cell with Bright Neon Glow
+                // Highlight Selected Cell with Bright Border (Fast rendering)
                 if (selectedCell && selectedCell.r === r && selectedCell.c === c) {
                     ctx.fillStyle = 'rgba(100, 255, 218, 0.45)';
                     ctx.fillRect(x, y, cellSize, cellSize);
                     ctx.strokeStyle = '#ffffff';
-                    ctx.shadowColor = '#64ffda';
-                    ctx.shadowBlur = 15;
                     ctx.lineWidth = 3.5;
                     ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
                 }
@@ -817,12 +827,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const tileW = cellSize - pad * 2;
                     const tileH = cellSize - pad * 2;
 
-                    // Draw Bright Tile Backing Container
-                    ctx.fillStyle = 'rgba(18, 26, 52, 0.85)';
+                    // Fast crisp borders (no expensive per-frame shadowBlur)
+                    ctx.fillStyle = tile.id === 'blackhole' ? 'rgba(40, 10, 20, 0.9)' : 'rgba(18, 26, 52, 0.85)';
                     ctx.strokeStyle = tile.color;
-                    ctx.lineWidth = 2.5;
-                    ctx.shadowColor = tile.color;
-                    ctx.shadowBlur = tile.id === 'blackhole' ? 22 : 14;
+                    ctx.lineWidth = tile.id === 'blackhole' ? 3.5 : 2.5;
 
                     ctx.beginPath();
                     ctx.roundRect(x + pad, y + pad, tileW, tileH, 12);
@@ -840,8 +848,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (tile.id === 'blackhole' && tile.turns > 0) {
                         ctx.font = '800 13px Orbitron, sans-serif';
                         ctx.fillStyle = '#ff0054';
-                        ctx.shadowColor = '#ff0054';
-                        ctx.shadowBlur = 10;
                         ctx.fillText(`⏳${3 - tile.turns}`, cellSize * 0.28, -cellSize * 0.28);
                     }
 

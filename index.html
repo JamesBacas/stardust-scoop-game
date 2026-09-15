@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Stardust Reactor | Spatial Logic Puzzle Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="game.css">
 </head>
 <body>
-    <!-- Animated Deep Space Grid Layer -->
+    <!-- Space Background -->
     <div id="starfield"></div>
 
     <div class="game-wrapper">
         <!-- Compact Control Header -->
         <header class="game-header">
             <div class="header-left">
-                <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄</button>
-                <button class="icon-btn" id="infoBtn" title="How to Play & Objective">ℹ️</button>
+                <button class="icon-btn" id="restartHeaderBtn" title="Restart Game">🔄 Reset</button>
+                <button class="icon-btn" id="infoBtn" title="How to Play & Objective">ℹ️ Guide</button>
             </div>
 
             <h1 class="game-title">⚡ STARDUST REACTOR</h1>
@@ -61,7 +61,7 @@
 
         <!-- Objective Banner -->
         <div class="objective-banner">
-            🎯 <strong>Objective:</strong> Contain <span id="targetHolesText">3</span> Black Holes 🕳️ & Reach <span id="targetScoreText">1200</span> Energy!
+            🎯 <strong>Goal:</strong> Tap adjacent tiles to swap! Contain <span id="targetHolesText">3</span> Black Holes 🕳️ & reach <span id="targetScoreText">1200</span> Energy!
         </div>
 
         <!-- Main Logic Canvas Container -->
@@ -69,18 +69,18 @@
             <canvas id="gameCanvas" width="540" height="540"></canvas>
 
             <!-- Objective Info / Instructions Modal -->
-            <div class="overlay-screen hidden" id="infoOverlay">
+            <div class="overlay-screen" id="infoOverlay">
                 <div class="overlay-card">
-                    <div class="badge">GAME LOGIC & RULES</div>
-                    <h2 style="color: var(--accent-gold); font-size: 1.25rem; margin-bottom: 8px;">⚡ Stardust Reactor Rules</h2>
+                    <div class="badge">HOW TO PLAY</div>
+                    <h2 style="color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 8px;">⚡ Stardust Reactor Guide</h2>
                     
                     <div class="rules-box">
-                        <p>🔹 <strong>Match 3+ Tiles:</strong> Align 3 identical tiles to harvest cosmic energy.</p>
-                        <p>⭐ <strong>Star System:</strong> 1 Star (&lt; 1,200 Energy), 2 Stars (1,200 Energy), 3 Stars (Beyond 1,200 Energy!)</p>
-                        <p>🕳️ <strong>Black Holes:</strong> Drop into orbit after Move 4! Match tiles next to a Black Hole or hit it with a Line Pulsar ⚡ to contain it!</p>
-                        <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Vaporizes its entire row & column!</p>
-                        <p>🌌 <strong>Match 5 (Quantum Core):</strong> Obliterates all tiles of the target element.</p>
-                        <p>📱 <strong>Controls:</strong> Tap or drag adjacent tiles on mobile & desktop.</p>
+                        <p>👉 <strong>Tap & Swap:</strong> Tap a tile to select it, then tap an adjacent tile to swap (or swipe across tiles).</p>
+                        <p>🔹 <strong>Match 3 Tiles:</strong> Align 3 matching elements (✨ 💎 🌟) to score Energy.</p>
+                        <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Creates a Pulsar tile ⚡ that vaporizes its entire row & column when matched.</p>
+                        <p>🌌 <strong>Match 5 (Quantum Core):</strong> Creates a Core tile 🌌 that clears all tiles of that target element.</p>
+                        <p>🕳️ <strong>Contain Black Holes:</strong> Match tiles adjacent to 🕳️ or blast with a Line Pulsar ⚡ to destroy it.</p>
+                        <p>⭐ <strong>Star Targets:</strong> 1 Star (&lt; 1,200 Energy), 2 Stars (1,200 Goal), 3 Stars (1,500+ Energy).</p>
                     </div>
 
                     <button class="btn btn-primary" id="closeInfoBtn">Got It!</button>
@@ -124,10 +124,32 @@
             </div>
         </div>
 
+        <!-- Scrollable Clear Guide Card for Mobile -->
+        <div class="inline-guide-card">
+            <h3>📖 Quick Rules & Controls</h3>
+            <div class="guide-grid">
+                <div class="guide-step">
+                    <span class="step-num">1</span>
+                    <div><strong>Tap & Swap:</strong> Tap tile A, then tap adjacent tile B to swap!</div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-num">2</span>
+                    <div><strong>Score Energy:</strong> Match 3+ identical tiles (✨ Stardust, 💎 Crystal, 🌟 Nova).</div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-num">3</span>
+                    <div><strong>Contain Black Holes:</strong> Match tiles next to 🕳️ or hit with Line Pulsar ⚡ lasers!</div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-num">4</span>
+                    <div><strong>Star Goals:</strong><br>⭐ 1 Star (&lt; 1,200 Energy)<br>⭐⭐ 2 Stars (1,200 Target Energy)<br>⭐⭐⭐ 3 Stars (&gt; 1,500 Energy!)</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Controls Hint Banner -->
         <div class="controls-hint">
-            <span>💻 <strong>Desktop:</strong> Click tile & click/drag adjacent to swap</span>
-            <span>📱 <strong>Mobile:</strong> Tap tile & tap/swipe adjacent tile</span>
+            <span>📱 <strong>Mobile & Desktop:</strong> Tap tile & tap adjacent tile to swap (or drag/swipe)</span>
         </div>
     </div>
 
