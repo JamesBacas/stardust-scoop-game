@@ -963,7 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
     infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
     closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
 
-    // Modal Mobile Navigation 3-Tabs
+    // Modal Mobile Navigation Tabs (Controls, Combos, Hazards)
     const tabControlsBtn = document.getElementById('tabControlsBtn');
     const tabCombosBtn = document.getElementById('tabCombosBtn');
     const tabHazardsBtn = document.getElementById('tabHazardsBtn');
@@ -972,12 +972,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabCombos = document.getElementById('tabCombos');
     const tabHazards = document.getElementById('tabHazards');
 
-    function setActiveTab(activeBtn, showContent) {
+    function setActiveTab(activeBtn, showEl) {
         [tabControlsBtn, tabCombosBtn, tabHazardsBtn].forEach(btn => {
             if (btn) btn.classList.toggle('active', btn === activeBtn);
         });
-        [tabControls, tabCombos, tabHazards].forEach(content => {
-            if (content) content.classList.toggle('hidden', content !== showContent);
+        [tabControls, tabCombos, tabHazards].forEach(el => {
+            if (el) el.classList.toggle('hidden', el !== showEl);
         });
     }
 
