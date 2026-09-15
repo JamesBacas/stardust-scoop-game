@@ -30,31 +30,33 @@
             </div>
         </header>
 
-        <!-- Compact Integrated Game HUD Bar -->
+        <!-- Spacious Integrated Game HUD Bar (Taller, Roomy for Mobile) -->
         <div class="compact-hud">
-            <div class="hud-item moves-item">
-                <span class="hud-lbl">MOVES</span>
-                <span class="hud-val" id="movesValue">16</span>
+            <div class="hud-top-row">
+                <div class="hud-item moves-item">
+                    <span class="hud-lbl">MOVES</span>
+                    <span class="hud-val" id="movesValue">16</span>
+                </div>
+
+                <div class="hud-item score-item">
+                    <span class="hud-lbl">ENERGY</span>
+                    <span class="hud-val" id="scoreValue">0</span>
+                    <span class="hud-target">/ 1200</span>
+                </div>
+
+                <div class="hud-item best-item">
+                    <span class="hud-lbl">BEST</span>
+                    <span class="hud-val" id="bestScoreValue" style="color: var(--accent-teal);">0</span>
+                </div>
+
+                <div class="hud-item hazard-item">
+                    <span class="hud-lbl">BLACK HOLES</span>
+                    <span class="hud-val" id="hazardValue">0/3 🕳️</span>
+                </div>
             </div>
 
-            <div class="hud-item score-item">
-                <span class="hud-lbl">ENERGY</span>
-                <span class="hud-val" id="scoreValue">0</span>
-                <span class="hud-target">/ 1200</span>
-            </div>
-
-            <div class="hud-item best-item">
-                <span class="hud-lbl">BEST</span>
-                <span class="hud-val" id="bestScoreValue" style="color: var(--accent-teal);">0</span>
-            </div>
-
-            <div class="hud-item hazard-item">
-                <span class="hud-lbl">BLACK HOLES</span>
-                <span class="hud-val" id="hazardValue">0/3 🕳️</span>
-            </div>
-
-            <!-- Cascade Combo Badge -->
-            <div class="status-tags-group">
+            <!-- Dedicated Combo Badge Row (taller, spacious, fits combos cleanly) -->
+            <div class="hud-combo-row">
                 <span class="mini-tag combo-tag hidden" id="comboBadge">⚡ COMBO x1</span>
             </div>
         </div>
@@ -68,32 +70,45 @@
         <div class="canvas-container" id="canvasContainer">
             <canvas id="gameCanvas" width="540" height="540"></canvas>
 
-            <!-- Objective Info / Instructions Modal with Mobile Tabs -->
+            <!-- Objective Info / Instructions Modal with Fixed Shape Tabs -->
             <div class="overlay-screen" id="infoOverlay">
-                <div class="overlay-card compact-card">
-                    <div class="badge">GUIDE</div>
-                    
-                    <!-- Easy Mobile Navigation Tabs -->
-                    <div class="modal-tabs">
-                        <button class="tab-btn active" id="tabControlsBtn">🎮 How to Swap</button>
-                        <button class="tab-btn" id="tabCombosBtn">⚡ Combos & Hazards</button>
-                    </div>
-
-                    <!-- Tab 1: How to Swap & Play -->
-                    <div class="tab-content" id="tabControls">
-                        <div class="rules-box">
-                            <p>1️⃣ <strong>Tap Tile:</strong> Tap any tile to select it (glowing green).</p>
-                            <p>2️⃣ <strong>Tap Neighbor:</strong> Tap an adjacent tile with gold border 🔲 to swap!</p>
-                            <p>3️⃣ <strong>Match 3+:</strong> Align 3 same tiles (✨ 💎 🌟) to score Energy.</p>
+                <div class="overlay-card fixed-modal">
+                    <div class="modal-header-area">
+                        <div class="badge">GAME GUIDE</div>
+                        <!-- 3-Tab Mobile Switcher -->
+                        <div class="modal-tabs">
+                            <button class="tab-btn active" id="tabControlsBtn">🎮 Controls</button>
+                            <button class="tab-btn" id="tabCombosBtn">⚡ Combos</button>
+                            <button class="tab-btn" id="tabHazardsBtn">🕳️ Black Holes</button>
                         </div>
                     </div>
 
-                    <!-- Tab 2: Special Combos & Black Holes -->
-                    <div class="tab-content hidden" id="tabCombos">
-                        <div class="rules-box">
-                            <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Clears entire row & column!</p>
-                            <p>🌌 <strong>Match 5 (Quantum Core):</strong> Clears all target element tiles.</p>
-                            <p>🕳️ <strong>Contain 3 Black Holes:</strong> Match next to 🕳️ or hit with ⚡ laser!</p>
+                    <div class="modal-body-area">
+                        <!-- Tab 1: Controls & How to Swap -->
+                        <div class="tab-content" id="tabControls">
+                            <div class="rules-box">
+                                <p>1️⃣ <strong>Tap Tile:</strong> Tap any tile to select (glowing green outline).</p>
+                                <p>2️⃣ <strong>Tap Neighbor:</strong> Tap an adjacent tile with gold border 🔲 to swap!</p>
+                                <p>3️⃣ <strong>Match 3+:</strong> Align 3 same elements (✨ 💎 🌟) to score Energy.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Special Combos -->
+                        <div class="tab-content hidden" id="tabCombos">
+                            <div class="rules-box">
+                                <p>⚡ <strong>Match 4 (Line Pulsar):</strong> Creates a Pulsar tile ⚡ that vaporizes its entire row & column when matched.</p>
+                                <p>🌌 <strong>Match 5 (Quantum Core):</strong> Creates a Core tile 🌌 that clears all tiles of that target element.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Attacking Black Holes -->
+                        <div class="tab-content hidden" id="tabHazards">
+                            <div class="rules-box">
+                                <p>🚨 <strong>Black Holes 🕳️:</strong> Drop after Move 4 and expand if not destroyed.</p>
+                                <p>⚔️ <strong>How to Contain:</strong><br>
+                                • <strong>Match Adjacent:</strong> Match 3 tiles next to 🕳️!<br>
+                                • <strong>Pulsar Laser:</strong> Hit 🕳️ with a Line Pulsar ⚡ laser!</p>
+                            </div>
                         </div>
                     </div>
 
@@ -103,7 +118,7 @@
 
             <!-- Game Over / Victory Overlay Modal -->
             <div class="overlay-screen hidden" id="endOverlay">
-                <div class="overlay-card">
+                <div class="overlay-card fixed-modal">
                     <div class="result-badge" id="resultBadge">STABILIZATION SUCCESS</div>
                     <h2 id="resultTitle">VICTORY! 🎉</h2>
                     
@@ -122,16 +137,16 @@
                             <span class="stat-val" id="finalScore">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-lbl">Moves Remaining</span>
+                            <span class="stat-lbl">Moves Left</span>
                             <span class="stat-val" id="finalMoves">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-lbl">Black Holes Destroyed</span>
+                            <span class="stat-lbl">BH Destroyed</span>
                             <span class="stat-val" id="finalHazards">0</span>
                         </div>
                     </div>
 
-                    <div class="btn-group-row">
+                    <div class="btn-group-row" style="width: 100%;">
                         <button class="btn btn-restart" id="restartOverlayBtn">🔄 Re-initialize Reactor</button>
                     </div>
                 </div>
@@ -140,7 +155,7 @@
 
         <!-- Controls Hint Banner -->
         <div class="controls-hint">
-            <span>📱 <strong>Controls:</strong> Tap tile & tap adjacent highlighted tile to swap</span>
+            <span>📱 <strong>Controls:</strong> Tap tile & tap adjacent highlighted tile 🔲 to swap</span>
         </div>
     </div>
 

@@ -963,27 +963,27 @@ document.addEventListener('DOMContentLoaded', () => {
     infoBtn.addEventListener('click', () => { infoOverlay.classList.remove('hidden'); });
     closeInfoBtn.addEventListener('click', () => { infoOverlay.classList.add('hidden'); });
 
-    // Modal Mobile Navigation Tabs
+    // Modal Mobile Navigation 3-Tabs
     const tabControlsBtn = document.getElementById('tabControlsBtn');
     const tabCombosBtn = document.getElementById('tabCombosBtn');
+    const tabHazardsBtn = document.getElementById('tabHazardsBtn');
+
     const tabControls = document.getElementById('tabControls');
     const tabCombos = document.getElementById('tabCombos');
+    const tabHazards = document.getElementById('tabHazards');
 
-    if (tabControlsBtn && tabCombosBtn) {
-        tabControlsBtn.addEventListener('click', () => {
-            tabControlsBtn.classList.add('active');
-            tabCombosBtn.classList.remove('active');
-            if (tabControls) tabControls.classList.remove('hidden');
-            if (tabCombos) tabCombos.classList.add('hidden');
+    function setActiveTab(activeBtn, showContent) {
+        [tabControlsBtn, tabCombosBtn, tabHazardsBtn].forEach(btn => {
+            if (btn) btn.classList.toggle('active', btn === activeBtn);
         });
-
-        tabCombosBtn.addEventListener('click', () => {
-            tabCombosBtn.classList.add('active');
-            tabControlsBtn.classList.remove('active');
-            if (tabCombos) tabCombos.classList.remove('hidden');
-            if (tabControls) tabControls.classList.add('hidden');
+        [tabControls, tabCombos, tabHazards].forEach(content => {
+            if (content) content.classList.toggle('hidden', content !== showContent);
         });
     }
+
+    if (tabControlsBtn) tabControlsBtn.addEventListener('click', () => setActiveTab(tabControlsBtn, tabControls));
+    if (tabCombosBtn) tabCombosBtn.addEventListener('click', () => setActiveTab(tabCombosBtn, tabCombos));
+    if (tabHazardsBtn) tabHazardsBtn.addEventListener('click', () => setActiveTab(tabHazardsBtn, tabHazards));
 
     // Initialize Game
     initBoard();

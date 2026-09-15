@@ -122,18 +122,34 @@ html, body {
     box-shadow: 0 0 12px var(--accent-teal);
 }
 
-/* Bright Compact HUD Bar */
+/* Taller Spacious Integrated HUD Bar (Fits Combos Cleanly on Mobile!) */
 .compact-hud {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(15, 22, 45, 0.90);
+    border: 1.5px solid var(--accent-teal);
+    border-radius: 12px;
+    padding: 8px 12px;
+    gap: 4px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(100, 255, 218, 0.1);
+}
+
+.hud-top-row {
     width: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: rgba(15, 22, 45, 0.88);
-    border: 1.5px solid var(--accent-teal);
-    border-radius: 12px;
-    padding: 8px 12px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(100, 255, 218, 0.1);
+}
+
+.hud-combo-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20px;
 }
 
 .hud-item {
@@ -171,8 +187,8 @@ html, body {
 
 .mini-tag {
     font-family: var(--font-orbitron);
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-size: 0.75rem;
+    padding: 3px 10px;
     border-radius: 6px;
     font-weight: 900;
     background: rgba(255, 209, 102, 0.3);
@@ -236,7 +252,7 @@ html, body {
     80% { transform: translate(4px, -2px); }
 }
 
-/* Compact, Mobile-Friendly Modal Overlays */
+/* Compact Modal Overlays */
 .overlay-screen {
     position: absolute;
     top: 0;
@@ -258,31 +274,47 @@ html, body {
     to { opacity: 1; }
 }
 
-.overlay-card {
+/* Fixed-Shape Modal Card (Prevents jumping/resizing across tabs!) */
+.overlay-card.fixed-modal {
     background: rgba(18, 25, 48, 0.96);
     border: 2px solid var(--accent-teal);
     border-radius: 14px;
     padding: 14px 16px;
-    width: 92%;
-    max-width: 330px;
-    max-height: 88vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    text-align: center;
+    width: 94%;
+    max-width: 340px;
+    height: 330px; /* Fixed height so shape stays clean across tabs */
     box-shadow: 0 0 25px rgba(100, 255, 218, 0.4), 0 16px 50px rgba(0, 0, 0, 0.9);
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
 }
 
-/* Easy Mobile Navigation Tabs */
+.modal-header-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-body-area {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 4px 0;
+}
+
+/* 3-Tab Mobile Navigation Buttons */
 .modal-tabs {
     display: flex;
     width: 100%;
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 4px;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 3px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -293,9 +325,9 @@ html, body {
     border: none;
     color: #94a3b8;
     font-family: var(--font-orbitron);
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    padding: 6px 4px;
+    padding: 6px 2px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -324,16 +356,9 @@ html, body {
     letter-spacing: 1px;
 }
 
-.modal-title {
-    font-family: var(--font-orbitron);
-    font-size: 1.0rem;
-    color: var(--accent-gold);
-    text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
-}
-
 .rules-box {
     text-align: left;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     line-height: 1.4;
     color: #e2e8f0;
     background: rgba(0, 0, 0, 0.45);
@@ -341,7 +366,7 @@ html, body {
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
 }
@@ -449,6 +474,9 @@ html, body {
     .game-wrapper {
         padding: 6px 10px;
         gap: 5px;
+    }
+    .overlay-card.fixed-modal {
+        height: 310px;
     }
 }
 
